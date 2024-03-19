@@ -1,14 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dtos/RegisterUser.dto';
-import { User } from './types/user.types';
+import { RegisteredUser, User } from './types/user.types';
 
 @Injectable()
 export class AuthService {
   constructor(private prismaService: PrismaService) {}
 
   async register(createUserDto: CreateUserDto): Promise<User> {
-    let user;
+    let user: RegisteredUser;
 
     user = await this.prismaService.user.findUnique({
       where: {
@@ -35,6 +35,13 @@ export class AuthService {
         ...createUserDto,
       },
     });
-    return user;
+
+    const _user: User = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+    };
+
+    return _user;
   }
 }

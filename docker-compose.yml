@@ -11,43 +11,44 @@ services:
     env_file:
       - .env
 
-  pgadmin:
-    container_name: cubify_pgadmin
-    image: dpage/pgadmin4:latest
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "${PGADMIN_PORT}:80"
-    depends_on:
-      - db
+  # pgadmin:
+  #   container_name: cubify_pgadmin
+  #   image: dpage/pgadmin4:latest
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: root
+  #   ports:
+  #     - "${PGADMIN_PORT}:80"
+  #   depends_on:
+  #     - db
 
-  backend:
-    container_name: cubify_backend
-    image: node:20.11.1
-    working_dir: /app/backend
-    volumes:
-      - ./backend:/app/backend
-      - ./backend/node_modules:/app/backend/node_modules
-    ports:
-      - "${BACKEND_DEV_PORT}:3000"
-    env_file:
-      - .env
-    command: sh -c "npm run start:dev"
+  # backend:
+  #   container_name: cubify_backend
+  #   image: node:20.11.1
+  #   working_dir: /app/backend
+  #   volumes:
+  #     - ./backend:/app/backend
+  #     - ./backend/node_modules:/app/backend/node_modules
+  #   ports:
+  #     - "${BACKEND_DEV_PORT}:3000"
+  #   env_file:
+  #     - .env
+  #   command: sh -c "npm run start:dev"
+  #   depends_on:
+  #     - db
     
-
-  frontend:
-    container_name: cubify_frontend
-    image: node:20.11.1
-    working_dir: /app/frontend
-    volumes:
-      - ./frontend:/app/frontend
-      - ./frontend/node_modules:/app/frontend/node_modules
-    ports:
-      - "${FRONTEND_DEV_PORT}:3000"
-    env_file:
-      - .env
-    command: sh -c "npm run dev"
+  # frontend:
+  #   container_name: cubify_frontend
+  #   image: node:20.11.1
+  #   working_dir: /app/frontend
+  #   volumes:
+  #     - ./frontend:/app/frontend
+  #     - ./frontend/node_modules:/app/frontend/node_modules
+  #   ports:
+  #     - "${FRONTEND_DEV_PORT}:3000"
+  #   env_file:
+  #     - .env
+  #   command: sh -c "npm run dev"
 
 volumes:
   cubify_volume_dev:
