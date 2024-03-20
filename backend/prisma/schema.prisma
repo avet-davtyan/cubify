@@ -16,9 +16,9 @@ model User {
 }
 
 model Cube {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description String?
-  owner       User    @relation(fields: [ownerId], references: [id])
-  ownerId     Int
+  id      Int    @id @default(autoincrement())
+  name    String
+  // description String?
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId Int
 }
