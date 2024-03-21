@@ -9,9 +9,9 @@ import {
 	registerDecorator,
 } from 'class-validator';
 
-@ValidatorConstraint({ name: 'email', async: true })
+@ValidatorConstraint({ name: 'emailOrUsername', async: true })
 @Injectable()
-export class UsernameEmailValidation implements ValidatorConstraintInterface {
+export class IsUniqueValidation implements ValidatorConstraintInterface {
 	constructor(private prismaService: PrismaService) {}
 
 	async validate(value: string, args: ValidationArguments): Promise<boolean> {
@@ -37,7 +37,7 @@ export function IsUnique(
 			propertyName: propertyName,
 			options: validationOptions,
 			constraints: [options],
-			validator: UsernameEmailValidation,
+			validator: IsUniqueValidation,
 		});
 	};
 }

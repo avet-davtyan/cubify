@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, IsStrongPassword, Validate } from 'class-validator';
-import { IsUnique } from './validations/IsUnique.validator';
+import { IsUnique } from './validations/IsUnique.validation';
 
 export class CreateUserDto {
 	@IsNotEmpty()
@@ -23,5 +23,8 @@ export class CreateUserDto {
 
 export class LoginUserDto {
 	@IsNotEmpty()
-	usernameOrEmail: string;
+	emailOrUsername: string;
+
+	@IsNotEmpty()
+	password: string;
 }
