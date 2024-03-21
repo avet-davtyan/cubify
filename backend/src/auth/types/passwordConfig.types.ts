@@ -1,3 +1,3 @@
 export interface PasswordConfig {
-  salt: number
+	salt: number;
 }

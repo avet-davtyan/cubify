@@ -2,8 +2,8 @@ import { Controller, Get } from '@nestjs/common';
 
 @Controller()
 export class AppController {
-  @Get()
-  findAll() {
-    return 'cubify';
-  }
+	@Get()
+	findAll() {
+		return 'cubify';
+	}
 }

@@ -1,12 +1,12 @@
 export interface User {
-  id: number;
-  username: string;
-  email: string;
+	id: number;
+	username: string;
+	email: string;
 }
 
 export interface RegisteredUser {
-  id: number;
-  username: string;
-  email: string;
-  password: string;
+	id: number;
+	username: string;
+	email: string;
+	password: string;
 }
