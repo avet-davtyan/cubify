@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { User } from './types/user.types';
-import { PassService } from './pass/pass.service';
+import { PassService } from './services/pass.service';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenStrategy } from './refreshToken.strategy';
 
