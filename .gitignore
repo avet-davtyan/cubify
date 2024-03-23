@@ -3,8 +3,9 @@ node_modules
 dist
 
 .eslintrc.json
-
+.prettierrc
 .next
 
 .env
 
+cube_images
