@@ -7,7 +7,7 @@ services:
     volumes:
       - cubify_volume_dev:/var/lib/postgresql/data
     ports:
-      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     env_file:
       - .env
 
@@ -42,10 +42,10 @@ services:
     volumes:
       - ./frontend:/app/frontend
     ports:
-      - "${FRONTEND_DEV_PORT}:3000"
+      - "${FRONTEND_DEV_PORT}:5173"
     env_file:
       - .env
-    command: sh -c "npm run dev"
+    command: sh -c "npm run dev -- --host"
 
 volumes:
   cubify_volume_dev:
