@@ -64,12 +64,29 @@ const SignUpForm = () => {
 	};
 	return (
 		<Card
-			className="p-4"
+			className="p-10"
 			style={{
 				backgroundColor: 'rgba(0,0,0,0.8)',
 				backdropFilter: 'blur(10px)',
 			}}
 		>
+			<div
+				style={{
+					width: '100%',
+					display: 'flex',
+					justifyContent: 'center',
+					marginBottom: '20px',
+				}}
+			>
+				<p
+					style={{
+						fontSize: '20px',
+					}}
+				>
+					Create a Cubify account
+				</p>
+			</div>
+
 			<div
 				style={{
 					width: '100%',
@@ -205,6 +222,7 @@ const SignUpForm = () => {
 								<p
 									style={{
 										opacity: '0.5',
+										fontSize: '13px',
 									}}
 								>
 									Already have an account?
@@ -213,7 +231,13 @@ const SignUpForm = () => {
 									href="#"
 									underline="hover"
 								>
-									Sign In
+									<p
+										style={{
+											fontSize: '12px',
+										}}
+									>
+										Sign In
+									</p>
 								</Link>
 							</div>
 							<Button
