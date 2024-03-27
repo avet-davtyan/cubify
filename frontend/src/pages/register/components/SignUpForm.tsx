@@ -1,12 +1,22 @@
-import { useState } from 'react';
-import { RegistraionData } from '../types/RegistrationTypes';
-import AuthService from '../../services/AuthService';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import { RegistraionData } from '../../types/AuthTypes';
+import AuthService from '../../../services/AuthService';
 import { Button, Card, Chip, Image, Input, Link } from '@nextui-org/react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
-import cubifyAv from '../../assets/rub.webp';
+import cubifyAv from '../../../assets/rub.webp';
 import { Formik } from 'formik';
 
-const SignUpForm = () => {
+interface SignUpProps {
+	setIsOpen: Dispatch<SetStateAction<boolean>>;
+	setIsOpenError: Dispatch<SetStateAction<boolean>>;
+	setErrorMessage: Dispatch<SetStateAction<string>>;
+}
+
+const SignUpForm: React.FC<SignUpProps> = ({
+	setIsOpen,
+	setIsOpenError,
+	setErrorMessage,
+}: SignUpProps) => {
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const [isVisibleConfirm, setIsVisibleConfirm] = useState<boolean>(false);
 
@@ -25,23 +35,29 @@ const SignUpForm = () => {
 		}
 		if (!values.username) {
 			errors.username = 'Username is required';
+		} else if (values.username.length < 6) {
+			errors.username = 'Must be at least 6 characters';
+		} else {
+			if (!/^[a-z0-9._]+$/.test(values.username)) {
+				errors.username = 'Only lowercase letters, numbers, . and _ are allowed';
+			}
 		}
 		if (!values.password) {
 			errors.password = 'Password is required';
 		} else if (values.password.length < 8) {
 			errors.password = 'Must be at least 8 characters';
 		}
+
 		if (!values.confirmPassword) {
 			errors.confirmPassword = 'Pleas confirm your password';
 		} else if (values.confirmPassword !== values.password) {
-			errors.confirmPassword = 'Wrong password';
+			errors.confirmPassword = `Password doesn't match`;
 		}
 
 		return errors;
 	};
 
-	const onSubmit = async (values: RegistraionData) => {
-		console.log('submitting');
+	const onSubmit = async (values: RegistraionData, { resetForm }: { resetForm: () => void }) => {
 		try {
 			setSignUpLoading(true);
 			await AuthService.register({
@@ -49,8 +65,12 @@ const SignUpForm = () => {
 				username: values.username,
 				password: values.password,
 			});
-		} catch (error) {
+			setIsOpen(true);
+			resetForm();
+		} catch (error: any) {
+			// setErrorMessage(error.request.response.data.message);
 			console.log(error);
+			setIsOpenError(true);
 		} finally {
 			setSignUpLoading(false);
 		}
@@ -63,37 +83,12 @@ const SignUpForm = () => {
 		confirmPassword: '',
 	};
 	return (
-		<Card
-			className="p-10"
-			style={{
-				backgroundColor: 'rgba(0,0,0,0.8)',
-				backdropFilter: 'blur(10px)',
-			}}
-		>
-			<div
-				style={{
-					width: '100%',
-					display: 'flex',
-					justifyContent: 'center',
-					marginBottom: '20px',
-				}}
-			>
-				<p
-					style={{
-						fontSize: '20px',
-					}}
-				>
-					Create a Cubify account
-				</p>
+		<Card className="p-10 bg-black bg-opacity-80 backdrop-blur-10">
+			<div className="w-full flex justify-center mb-20">
+				<p className="text-2xl">Create a Cubify account</p>
 			</div>
 
-			<div
-				style={{
-					width: '100%',
-					display: 'flex',
-					justifyContent: 'center',
-				}}
-			>
+			<div className="w-full flex justify-center">
 				<Image
 					src={cubifyAv}
 					width={50}
@@ -106,52 +101,46 @@ const SignUpForm = () => {
 			>
 				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
 					<form onSubmit={handleSubmit}>
-						<div className="flex flex-col gap-3">
+						<div className="flex flex-col gap-5">
 							<Input
 								type="email"
 								name="email"
+								isInvalid={errors.email && touched.email ? true : false}
+								errorMessage={errors.email && touched.email && errors.email}
 								label="Email"
 								variant="underlined"
 								placeholder="Enter your email"
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.email}
+								size="lg"
+								className="w-unit-7xl"
 							/>
-							{errors.email && touched.email && (
-								<Chip
-									size="sm"
-									color="danger"
-									variant="bordered"
-								>
-									{errors.email}
-								</Chip>
-							)}
+
 							<Input
 								name="username"
 								label="Username"
 								variant="underlined"
+								isInvalid={errors.username && touched.username ? true : false}
+								errorMessage={errors.username && touched.username && errors.username}
 								placeholder="Create username"
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.username}
+								size="lg"
 							/>
-							{errors.username && touched.username && (
-								<Chip
-									size="sm"
-									color="danger"
-									variant="bordered"
-								>
-									{errors.username}
-								</Chip>
-							)}
+
 							<Input
 								label="Password"
 								name="password"
 								variant="underlined"
+								isInvalid={errors.password && touched.password ? true : false}
+								errorMessage={errors.password && touched.password && errors.password}
 								placeholder="Create password"
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.password}
+								size="lg"
 								endContent={
 									<button
 										className="focus:outline-none"
@@ -166,25 +155,21 @@ const SignUpForm = () => {
 									</button>
 								}
 								type={isVisible ? 'text' : 'password'}
-								className="max-w-xs"
 							/>
-							{errors.password && touched.password && (
-								<Chip
-									size="sm"
-									color="danger"
-									variant="bordered"
-								>
-									{errors.password}
-								</Chip>
-							)}
+
 							<Input
 								label="Confirm your password"
 								name="confirmPassword"
 								variant="underlined"
+								isInvalid={errors.confirmPassword && touched.confirmPassword ? true : false}
+								errorMessage={
+									errors.confirmPassword && touched.confirmPassword && errors.confirmPassword
+								}
 								placeholder="Confirm your password"
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.confirmPassword}
+								size="lg"
 								endContent={
 									<button
 										className="focus:outline-none"
@@ -199,45 +184,15 @@ const SignUpForm = () => {
 									</button>
 								}
 								type={isVisibleConfirm ? 'text' : 'password'}
-								className="max-w-xs"
 							/>
-							{errors.confirmPassword && touched.confirmPassword && (
-								<Chip
-									size="sm"
-									color="danger"
-									variant="bordered"
-								>
-									{errors.confirmPassword}
-								</Chip>
-							)}
-							<div
-								style={{
-									width: '100%',
-									display: 'flex',
-									justifyContent: 'center',
-									alignItems: 'center',
-									flexDirection: 'column',
-								}}
-							>
-								<p
-									style={{
-										opacity: '0.5',
-										fontSize: '13px',
-									}}
-								>
-									Already have an account?
-								</p>
+
+							<div className="w-full flex justify-center items-center flex-col">
+								<p className="opacity-50 text-sm">Already have an account?</p>
 								<Link
-									href="#"
+									href="/login"
 									underline="hover"
 								>
-									<p
-										style={{
-											fontSize: '12px',
-										}}
-									>
-										Sign In
-									</p>
+									<p className="text-sm">Sign In</p>
 								</Link>
 							</div>
 							<Button
@@ -246,6 +201,7 @@ const SignUpForm = () => {
 								color="primary"
 								disabled={isSubmitting}
 								isLoading={signUpLoading}
+								size="lg"
 							>
 								Sign Up
 							</Button>

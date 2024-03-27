@@ -4,5 +4,5 @@ export const jwtConstants = {
 	refresh:
 		'a5ef62cbf13d389a2906e48b7066609e415d39b5f0689bb5667355b4c12c253f0bc589643dc8d44875155553909c3c4ec6452b9c4c85311377c48fd432f4e6e9',
 	accessExpireTime: '15s',
-	refreshExpireTime: '1h',
+	refreshExpireTime: '3h',
 };

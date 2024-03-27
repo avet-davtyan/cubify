@@ -1,11 +1,11 @@
 import api from '../http/base_api';
 
 export default class AuthService {
-	static async login(username:string, password:string) {
-		return api.post(`auth/token/`, { username, password }, { withCredentials: true });
+	static async login(emailOrUsername: string, password: string) {
+		return api.post(`auth/login/`, { emailOrUsername, password });
 	}
 
-	static async register(registrationData:{username:string, email:string, password: string}) {
+	static async register(registrationData: { username: string; email: string; password: string }) {
 		return api.post(`auth/register/`, registrationData);
 	}
 
@@ -14,7 +14,7 @@ export default class AuthService {
 	}
 
 	static async verify() {
-		return api.post(`auth/token/verify/`, {}, { withCredentials: true });
+		return api.post(`auth/verify/`, {});
 	}
 
 	static async refresh() {

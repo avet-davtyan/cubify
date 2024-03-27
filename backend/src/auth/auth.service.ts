@@ -5,6 +5,8 @@ import { User } from './types/user.types';
 import { PassService } from './services/pass.service';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenStrategy } from './refreshToken.strategy';
+import { Headers } from '@nestjs/common';
+import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -49,6 +51,16 @@ export class AuthService {
 			accessToken,
 			refreshToken,
 		};
+	}
+
+	async verify(req: Request) {
+		const user = req.user as User;
+		const reqUser: User = {
+			id: user.id,
+			email: user.email,
+			username: user.username,
+		};
+		return reqUser;
 	}
 
 	async refresh(refreshToken: string): Promise<{ accessToken: string }> {

@@ -1,7 +1,16 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe } from '@nestjs/common';
+import {
+	Controller,
+	Post,
+	Body,
+	UsePipes,
+	ValidationPipe,
+	UseGuards,
+	Request,
+} from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { AuthService } from './auth.service';
 import { User } from './types/user.types';
+import { AuthGuard } from './guards/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +28,12 @@ export class AuthController {
 		@Body() loginUserDto: LoginUserDto,
 	): Promise<{ accessToken: string; refreshToken: string }> {
 		return await this.authService.login(loginUserDto);
+	}
+
+	@UseGuards(AuthGuard)
+	@Post('verify')
+	async verify(@Request() req) {
+		return this.authService.verify(req);
 	}
 
 	@Post('refresh')

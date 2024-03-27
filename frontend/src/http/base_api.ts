@@ -8,7 +8,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-	config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+	config.headers.Authorization = `Bearer ${localStorage.getItem('at')}`;
 	return config;
 });
 
@@ -17,23 +17,22 @@ api.interceptors.response.use(
 		return config;
 	},
 	async (error) => {
-		console.log(error);
+		// console.log(error);
 		const originalRequest = error.config;
 		if (error.response.status === 401) {
+			console.log('yeah error');
 			originalRequest._isRetry = true;
 			try {
 				const url = new URL(API_URL);
-				url.pathname = "auth/token/refresh/";
+				url.pathname = 'auth/refresh/';
 
-				const response = await axios.post(
-					url.toString(),
-					{},
-					{ withCredentials: true },
-				);
-				localStorage.setItem('token', response.data.access);
+				const response = await axios.post(url.toString(), {
+					refreshToken: localStorage.getItem('rt'),
+				});
+				localStorage.setItem('at', response.data.accessToken);
 				return api.request(originalRequest);
 			} catch (e) {
-				console.log(e)
+				// console.log(e);
 			}
 		}
 

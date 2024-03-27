@@ -1,14 +1,15 @@
 import React from 'react';
-import backImage from '../assets/cubeBack.png';
-import SignUpForm from './components/SignUpForm';
-const Register: React.FC = () => {
+import backImage from '../../assets/cubeBack.png';
+import SignInForm from './components/SignInForm';
+
+const Login: React.FC = () => {
 	return (
 		<div
 			className="w-full h-full absolute flex justify-center items-center"
 			style={{ backgroundImage: `url(${backImage})`, overflow: 'auto' }}
 		>
-			<SignUpForm />
+			<SignInForm />
 		</div>
 	);
 };
-export default Register;
+export default Login;

@@ -1,7 +1,17 @@
 import { create } from 'zustand';
-import AuthService from '../services/AuthService.jsx';
+import AuthService from '../services/AuthService';
 
-const useAuthStore = create((set) => ({
+interface AuthState {
+	isAuth: boolean;
+	isLoading: boolean;
+	user: { username: string; email: string; password: string } | null;
+	setAuth: (bool: boolean) => void;
+	setLoading: (bool: boolean) => void;
+	login: (emailOrUsername: string, password: string) => void;
+	verify: () => void;
+}
+
+const useAuthStore = create<AuthState>((set) => ({
 	isAuth: false,
 	isLoading: true,
 	user: null,
@@ -9,15 +19,17 @@ const useAuthStore = create((set) => ({
 	setAuth: (bool: boolean) => set(() => ({ isAuth: bool })),
 	setLoading: (bool: boolean) => set(() => ({ isLoading: bool })),
 
-	// login: async (username, password) => {
-	// 	try {
-	// 		const response = await AuthService.login(username, password);
-	// 		localStorage.setItem('token', response.data.access);
-	// 		set(() => ({ isAuth: true }));
-	// 	} catch (e) {
-	// 		return e.code;
-	// 	}
-	// },
+	login: async (emailOrUsername: string, password: string) => {
+		try {
+			const response = await AuthService.login(emailOrUsername, password);
+			localStorage.setItem('at', response.data.accessToken);
+			localStorage.setItem('rt', response.data.refreshToken);
+			console.log(response.data.accessToken);
+			set(() => ({ isAuth: true }));
+		} catch (e: any) {
+			return e.code;
+		}
+	},
 
 	// logout: async () => {
 	// 	try {
@@ -41,15 +53,14 @@ const useAuthStore = create((set) => ({
 	// 	}
 	// },
 
-	// verify: async (navigateTo) => {
-	// 	try {
-	// 		const response = await AuthService.verify();
-	// 		set(() => ({ isAuth: true, user: response.data }));
-	// 	} catch (e) {
-	// 		navigateTo();
-	// 		return e.code;
-	// 	}
-	// },
+	verify: async () => {
+		try {
+			const response = await AuthService.verify();
+			set(() => ({ isAuth: true, user: response.data }));
+		} catch (e) {
+			// console.log(e);
+		}
+	},
 }));
 
 export default useAuthStore;

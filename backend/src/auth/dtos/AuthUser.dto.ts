@@ -1,8 +1,14 @@
-import { IsEmail, IsNotEmpty, IsStrongPassword, Validate } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, Matches } from 'class-validator';
 import { IsUnique } from './validations/IsUnique.validation';
 
 export class CreateUserDto {
 	@IsNotEmpty()
+	@MinLength(6, {
+		message: 'username must be at least 6 characters',
+	})
+	@Matches(/^[a-z0-9._]+$/, {
+		message: 'Only lowercase letters, numbers, . and _ are allowed',
+	})
 	@IsUnique({ type: 'username' })
 	username: string;
 
@@ -12,11 +18,8 @@ export class CreateUserDto {
 	email: string;
 
 	@IsNotEmpty()
-	@IsStrongPassword({
-		minLength: 8,
-		minLowercase: 1,
-		minNumbers: 1,
-		minUppercase: 1,
+	@MinLength(8, {
+		message: 'password must be at least 8 characters',
 	})
 	password: string;
 }
