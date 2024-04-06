@@ -1,14 +1,14 @@
 import { Canvas } from '@react-three/fiber';
 import Experience from './components/Experience';
-import React, { useState } from 'react';
-import { Button, Image, Input, Textarea, image } from '@nextui-org/react';
-import ImageUploading, { ImageListType } from 'react-images-uploading';
-import toast, { Toaster } from 'react-hot-toast';
-import { HexColorPicker } from 'react-colorful';
+import React from 'react';
+import { Button, Input, Textarea } from '@nextui-org/react';
+
+import { Toaster } from 'react-hot-toast';
+
 import useCreateCubeStore from '../../store/CreateCubeStore';
+import api from '../../http/base_api';
 const CreateCube: React.FC = () => {
-	const { backgroundColor, setColor, setCubeDescription, setCubeName, sides } =
-		useCreateCubeStore();
+	const { setCubeDescription, setCubeName, sides } = useCreateCubeStore();
 	return (
 		<div className="w-full h-full absolute flex justify-center items-center">
 			<div
@@ -55,8 +55,22 @@ const CreateCube: React.FC = () => {
 						<Button
 							variant="shadow"
 							color="primary"
-							onPress={() => {
-								toast('hi');
+							onPress={async () => {
+								const formData = new FormData();
+								sides.side1 && formData.append('image1', sides.side1);
+								sides.side2 && formData.append('image2', sides.side2);
+								sides.side3 && formData.append('image3', sides.side3);
+								sides.side4 && formData.append('image4', sides.side4);
+								sides.side5 && formData.append('image5', sides.side5);
+								sides.side6 && formData.append('image6', sides.side6);
+								formData.append('name', 'test_cube');
+								formData.append('description', '...');
+								try {
+									const response = await api.post('cube/create_cube', formData);
+									console.log(response.data);
+								} catch (error) {
+									console.log(error);
+								}
 							}}
 							// isDisabled={Object.keys(sides).length !== 6}
 						>
@@ -69,32 +83,16 @@ const CreateCube: React.FC = () => {
 					style={{
 						height: '100%',
 						width: '100%',
+						borderLeft: '1px solid gray',
 					}}
 				>
-					<div
-						style={{
-							position: 'absolute',
-							zIndex: '1',
-						}}
-					>
-						<HexColorPicker
-							style={{
-								width: '150px',
-								height: '150px',
-								left: '10px',
-								top: '10px',
-							}}
-							color={backgroundColor}
-							onChange={setColor}
-						/>
-					</div>
 					<Canvas
 						shadows
 						camera={{ position: [90, 90, 90], fov: 1 }}
 					>
 						<color
 							attach="background"
-							args={[backgroundColor]}
+							args={['black']}
 						/>
 						<Experience />
 					</Canvas>

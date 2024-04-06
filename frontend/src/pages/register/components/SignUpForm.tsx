@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { RegistraionData } from '../../types/AuthTypes';
+import { RegistraionData } from '../../../types/AuthTypes';
 import AuthService from '../../../services/AuthService';
 import { Button, Card, Chip, Image, Input, Link } from '@nextui-org/react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
@@ -12,11 +12,7 @@ interface SignUpProps {
 	setErrorMessage: Dispatch<SetStateAction<string>>;
 }
 
-const SignUpForm: React.FC<SignUpProps> = ({
-	setIsOpen,
-	setIsOpenError,
-	setErrorMessage,
-}: SignUpProps) => {
+const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUpProps) => {
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const [isVisibleConfirm, setIsVisibleConfirm] = useState<boolean>(false);
 
@@ -42,6 +38,11 @@ const SignUpForm: React.FC<SignUpProps> = ({
 				errors.username = 'Only lowercase letters, numbers, . and _ are allowed';
 			}
 		}
+		if (!values.fullName) {
+			errors.fullName = 'Full Name is required';
+		} else if (values.fullName.length > 30) {
+			errors.fullName = 'Full Name at maximum 20 characters';
+		}
 		if (!values.password) {
 			errors.password = 'Password is required';
 		} else if (values.password.length < 8) {
@@ -63,12 +64,12 @@ const SignUpForm: React.FC<SignUpProps> = ({
 			await AuthService.register({
 				email: values.email,
 				username: values.username,
+				fullName: values.fullName,
 				password: values.password,
 			});
 			setIsOpen(true);
 			resetForm();
 		} catch (error: any) {
-			// setErrorMessage(error.request.response.data.message);
 			console.log(error);
 			setIsOpenError(true);
 		} finally {
@@ -79,11 +80,12 @@ const SignUpForm: React.FC<SignUpProps> = ({
 	const initialValues: RegistraionData = {
 		email: '',
 		username: '',
+		fullName: '',
 		password: '',
 		confirmPassword: '',
 	};
 	return (
-		<Card className="p-10 bg-black bg-opacity-80 backdrop-blur-10">
+		<Card className="p-10">
 			<div className="w-full flex justify-center mb-20">
 				<p className="text-2xl">Create a Cubify account</p>
 			</div>
@@ -127,6 +129,19 @@ const SignUpForm: React.FC<SignUpProps> = ({
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.username}
+								size="lg"
+							/>
+
+							<Input
+								name="fullName"
+								label="Full Name"
+								variant="underlined"
+								isInvalid={errors.fullName && touched.fullName ? true : false}
+								errorMessage={errors.fullName && touched.fullName && errors.fullName}
+								placeholder="Full Name"
+								onChange={handleChange}
+								onBlur={handleBlur}
+								value={values.fullName}
 								size="lg"
 							/>
 

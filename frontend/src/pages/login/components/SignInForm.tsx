@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { LoginData } from '../../types/AuthTypes';
+import { LoginData } from '../../../types/AuthTypes';
 import AuthService from '../../../services/AuthService';
 import { Button, Card, Chip, Image, Input, Link } from '@nextui-org/react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
@@ -51,7 +51,7 @@ const SignInForm: React.FC = () => {
 		password: '',
 	};
 	return (
-		<Card className="p-10 bg-black bg-opacity-80 backdrop-blur-10">
+		<Card className="p-10  rounded">
 			<div className="w-full flex justify-center mb-10">
 				<p className="text-2xl">Welcome back</p>
 			</div>
@@ -123,8 +123,8 @@ const SignInForm: React.FC = () => {
 								</Link>
 							</div>
 							<Button
+								className="rounded"
 								type="submit"
-								variant="shadow"
 								color="primary"
 								disabled={isSubmitting}
 								isLoading={signInLoading}

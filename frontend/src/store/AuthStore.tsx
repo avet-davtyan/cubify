@@ -4,7 +4,7 @@ import AuthService from '../services/AuthService';
 interface AuthState {
 	isAuth: boolean;
 	isLoading: boolean;
-	user: { username: string; email: string; password: string } | null;
+	user: { id: number; username: string; email: string; fullName: string } | null;
 	setAuth: (bool: boolean) => void;
 	setLoading: (bool: boolean) => void;
 	login: (emailOrUsername: string, password: string) => void;
@@ -27,7 +27,7 @@ const useAuthStore = create<AuthState>((set) => ({
 			console.log(response.data.accessToken);
 			set(() => ({ isAuth: true }));
 		} catch (e: any) {
-			return e.code;
+			throw e;
 		}
 	},
 

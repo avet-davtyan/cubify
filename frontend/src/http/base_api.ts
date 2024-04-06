@@ -17,10 +17,8 @@ api.interceptors.response.use(
 		return config;
 	},
 	async (error) => {
-		// console.log(error);
 		const originalRequest = error.config;
 		if (error.response.status === 401) {
-			console.log('yeah error');
 			originalRequest._isRetry = true;
 			try {
 				const url = new URL(API_URL);

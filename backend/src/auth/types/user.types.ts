@@ -2,6 +2,7 @@ export interface User {
 	id: number;
 	username: string;
 	email: string;
+	fullName: string;
 }
 
 export interface RegisteredUser {
@@ -9,4 +10,5 @@ export interface RegisteredUser {
 	username: string;
 	email: string;
 	password: string;
+	fullName: string;
 }

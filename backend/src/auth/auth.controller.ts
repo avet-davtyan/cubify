@@ -1,12 +1,4 @@
-import {
-	Controller,
-	Post,
-	Body,
-	UsePipes,
-	ValidationPipe,
-	UseGuards,
-	Request,
-} from '@nestjs/common';
+import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, Req } from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { AuthService } from './auth.service';
 import { User } from './types/user.types';
@@ -32,7 +24,7 @@ export class AuthController {
 
 	@UseGuards(AuthGuard)
 	@Post('verify')
-	async verify(@Request() req) {
+	async verify(@Req() req) {
 		return this.authService.verify(req);
 	}
 

@@ -30,6 +30,7 @@ export class AuthService {
 			id: user.id,
 			email: user.email,
 			username: user.username,
+			fullName: 'a',
 		};
 
 		return reqUser;
@@ -43,6 +44,7 @@ export class AuthService {
 			id: user.id,
 			email: user.email,
 			username: user.username,
+			fullName: user.fullName,
 		};
 		const accessToken = await this.jwtService.signAsync(reqUser);
 		const refreshToken = await this.refreshTokenStrategy.generateRefreshToken(reqUser);
@@ -59,6 +61,7 @@ export class AuthService {
 			id: user.id,
 			email: user.email,
 			username: user.username,
+			fullName: user.fullName,
 		};
 		return reqUser;
 	}
@@ -69,6 +72,7 @@ export class AuthService {
 			id: user.id,
 			email: user.email,
 			username: user.username,
+			fullName: user.fullName,
 		};
 		const accessToken = await this.jwtService.signAsync(reqUser);
 

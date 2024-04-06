@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, MinLength, Matches } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, Matches, MaxLength } from 'class-validator';
 import { IsUnique } from './validations/IsUnique.validation';
 
 export class CreateUserDto {
@@ -11,6 +11,10 @@ export class CreateUserDto {
 	})
 	@IsUnique({ type: 'username' })
 	username: string;
+
+	@IsNotEmpty()
+	@MaxLength(30)
+	fullName: string;
 
 	@IsNotEmpty()
 	@IsEmail()

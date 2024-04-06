@@ -11,16 +11,18 @@ model User {
   id       Int    @id @default(autoincrement())
   email    String @unique
   username String @unique
+  fullName String
   password String
   cubes    Cube[]
+  Like     Like[]
 }
 
 model Cube {
-  id              Int     @id @default(autoincrement())
-  owner           User    @relation(fields: [ownerId], references: [id])
+  id              Int      @id @default(autoincrement())
+  owner           User     @relation(fields: [ownerId], references: [id])
   ownerId         Int
   name            String
-  pending         Boolean @default(true)
+  pending         Boolean  @default(true)
   description     String?
   backgroundColor String?
   side1           String?
@@ -29,4 +31,16 @@ model Cube {
   side4           String?
   side5           String?
   side6           String?
+  createdAt       DateTime @default(now())
+  Like            Like[]
+}
+
+model Like {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  cube   Cube @relation(fields: [cubeId], references: [id])
+  cubeId Int
+
+  @@unique([userId, cubeId])
 }

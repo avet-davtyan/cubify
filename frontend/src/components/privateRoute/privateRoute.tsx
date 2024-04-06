@@ -1,49 +1,63 @@
-import { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import NavBar from './components/NavBar';
+import { useEffect } from 'react';
+import api from '../../http/base_api';
 import useAuthStore from '../../store/AuthStore';
-import back from '../../assets/cubecube.png';
-import { Card, Image, CardBody, CardHeader, Button, Avatar, CardFooter } from '@nextui-org/react';
-import { Canvas } from '@react-three/fiber';
-import Experience from '../../pages/createCube/components/Experience';
+import SquareLoader from 'react-spinners/SquareLoader';
+import useCubeStore from '../../store/CubeStore';
 
 function PrivateRoute() {
 	const authStore = useAuthStore();
+	const cubeStore = useCubeStore();
+
 	useEffect(() => {
-		const fetchData = async () => {
+		const fetch = async () => {
 			try {
 				await authStore.verify();
+				await cubeStore.getCubeCount();
+				authStore.setLoading(false);
 			} catch (error) {
 				console.log(error);
 			}
 		};
-
-		fetchData();
+		fetch();
 	}, []);
 	return (
 		<>
-			{/* <div
-				style={{
-					position: 'absolute',
-					height: '100%',
-					width: '100%',
-				}}
-			></div>
-			<div
-				style={{
-					position: 'absolute',
-					width: '100%',
-					height: '100%',
-					backgroundColor: 'rgba(0,0,0,0.4)',
-
-					backdropFilter: 'blur(20px)',
-				}}
-			></div>
-			<NavBar /> */}
-			<div>
-				<div className="container mx-auto mt-20 flex justify-center">
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+			{authStore.isLoading ? (
+				<div
+					style={{
+						position: 'absolute',
+						height: '100%',
+						width: '100%',
+						justifyContent: 'center',
+						alignItems: 'center',
+						display: 'flex',
+					}}
+				>
+					<SquareLoader color="white" />
 				</div>
-			</div>
+			) : (
+				<>
+					<div
+						style={{
+							position: 'absolute',
+							height: '100%',
+							width: '100%',
+							// justifyContent: 'center',
+							alignItems: 'center',
+							display: 'flex',
+							flexDirection: 'column',
+							// paddingTop: '80px',
+							overflow: 'auto',
+						}}
+					>
+						<NavBar />
+						<Outlet />
+					</div>
+					{/* <NavBar /> */}
+				</>
+			)}
 		</>
 	);
 }

@@ -5,7 +5,12 @@ export default class AuthService {
 		return api.post(`auth/login/`, { emailOrUsername, password });
 	}
 
-	static async register(registrationData: { username: string; email: string; password: string }) {
+	static async register(registrationData: {
+		username: string;
+		email: string;
+		fullName: string;
+		password: string;
+	}) {
 		return api.post(`auth/register/`, registrationData);
 	}
 

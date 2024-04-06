@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { useContainer } from 'class-validator';
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -10,6 +11,13 @@ async function bootstrap() {
 		origin: '*',
 		credentials: true,
 	});
+	app.use(
+		bodyParser.urlencoded({
+			extended: true,
+		}),
+	);
+
+	app.use(bodyParser.json());
 	await app.listen(3000);
 }
 bootstrap();

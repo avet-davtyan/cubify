@@ -12,72 +12,107 @@ import {
 	Avatar,
 	Chip,
 	User,
+	Input,
+	Dropdown,
+	DropdownItem,
+	DropdownMenu,
+	DropdownTrigger,
 } from '@nextui-org/react';
 import cubifyAv from '../../../assets/rub.webp';
 import { useState } from 'react';
 import useAuthStore from '../../../store/AuthStore';
+import { SearchOutlined } from '@ant-design/icons';
+import style from './NavBar.module.scss';
+import useDarkModeStore from '../../../store/DarkLightModeStore';
 
 const NavBar = () => {
-	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-	const { isAuth, user } = useAuthStore();
-
-	const menuItems = [
-		'Profile',
-		'Dashboard',
-		'Activity',
-		'Analytics',
-		'System',
-		'Deployments',
-		'My Settings',
-		'Team Settings',
-		'Help & Feedback',
-		'Log Out',
-	];
-
+	const { user } = useAuthStore();
+	const darkModeStore = useDarkModeStore();
+	const pathName = location.pathname;
 	return (
-		<Navbar onMenuOpenChange={setIsMenuOpen}>
-			<NavbarContent>
-				<NavbarMenuToggle
-					aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-					className="sm:hidden"
-				/>
-				<NavbarBrand>
-					<Image
-						src={cubifyAv}
-						width={30}
-					/>
-					<p className="font-bold text-inherit ml-4">CUBIFY</p>
-				</NavbarBrand>
-			</NavbarContent>
-
-			<User
-				name="Junior Garcia"
-				description={
-					<Link
-						href="https://twitter.com/jrgarciadev"
-						size="sm"
-						isExternal
+		<Navbar isBordered>
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					gap: '20px',
+				}}
+			>
+				<div
+					style={{
+						backgroundColor: 'white',
+						width: '30px',
+						height: '30px',
+					}}
+				></div>
+				<p>Cubify</p>
+			</div>
+			<div
+				style={{
+					display: 'flex',
+					gap: '20px',
+				}}
+			>
+				<a
+					href="/"
+					style={{
+						opacity: pathName == '/' ? '0.5' : '1',
+						borderBottom: pathName == '/' ? '1px solid' : '',
+					}}
+				>
+					Home
+				</a>
+				<a
+					href="/cubes"
+					style={{
+						opacity: pathName == '/cubes' ? '0.5' : '1',
+						borderBottom: pathName == '/cubes' ? '1px solid' : '',
+					}}
+				>
+					Cubes
+				</a>
+				<a
+					href="/create_cube"
+					style={{
+						opacity: pathName == '/create_cube' ? '0.5' : '1',
+						borderBottom: pathName == '/create_cube' ? '1px solid' : '',
+					}}
+				>
+					Create a Cube
+				</a>
+			</div>
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					gap: '20px',
+				}}
+			>
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						alignItems: 'center',
+						gap: '15px',
+					}}
+				>
+					<button
+						onClick={() => {
+							console.log('hi');
+							darkModeStore.setDarkMode(!darkModeStore.darkMode);
+						}}
 					>
-						{`@${user?.username}`}
-					</Link>
-				}
-			/>
-			<NavbarMenu>
-				{menuItems.map((item, index) => (
-					<NavbarMenuItem key={`${item}-${index}`}>
-						<Link
-							color={
-								index === 2 ? 'primary' : index === menuItems.length - 1 ? 'danger' : 'foreground'
-							}
-							className="w-full"
-							href="#"
-							size="lg"
-						>
-							{item}
-						</Link>
-					</NavbarMenuItem>
-				))}
-			</NavbarMenu>
+						darkMode
+					</button>
+					<p
+						style={{
+							opacity: '0.7',
+						}}
+					>
+						{user?.fullName}
+					</p>
+				</div>
+			</div>
 		</Navbar>
 	);
 };

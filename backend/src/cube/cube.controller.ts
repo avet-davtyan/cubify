@@ -1,45 +1,35 @@
-import { Controller, Post, Body, UseInterceptors, UploadedFiles, Get } from '@nestjs/common';
+import {
+	Controller,
+	Post,
+	Body,
+	UseInterceptors,
+	UploadedFiles,
+	Get,
+	UseGuards,
+	Req,
+	Param,
+	Query,
+} from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as fs from 'fs';
 import { join } from 'path';
 import { Request } from 'express';
 import { CreateCubeBodyDto, CreateCubeFilesDto } from './dtos/CreateCube.dto';
+import { CubeService } from './cube.service';
+import { CreateCubeGuard } from './guards/createCube.guard';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Cube } from './types/cube.types';
+import { InteractionService } from './services/interaction.service';
 
 @Controller('cube')
 export class CubeController {
-	@Get()
-	get() {
-		return 'cubes';
-	}
+	constructor(
+		private cubeService: CubeService,
+		private interactionService: InteractionService,
+	) {}
 
-	@Post('test')
-	@UseInterceptors(FileFieldsInterceptor([{ name: 'image', maxCount: 1 }]))
-	async uploadTestImage(@UploadedFiles() files, @Body() userData: any) {
-		const image1 = files['image'][0];
-		console.log(image1);
-		try {
-			// Create a random directory name
-			const randomDirectoryName = 'cube_images/' + 'test';
-			fs.mkdirSync(randomDirectoryName, { recursive: true });
-
-			const randomFileName = Math.random().toString(36).substring(7) + '.jpg';
-
-			// Construct the full path to save the image
-			const imagePath = join(randomDirectoryName, randomFileName);
-
-			// Write the image buffer to the file
-			fs.writeFile(imagePath, image1.buffer, () => {
-				console.log(imagePath);
-			});
-
-			return imagePath;
-		} catch (error) {
-			// Handle error appropriately
-			console.log(error);
-		}
-	}
-
-	@Post()
+	@UseGuards(AuthGuard)
+	@Post('create_cube')
 	@UseInterceptors(
 		FileFieldsInterceptor([
 			{ name: 'image1', maxCount: 1 },
@@ -51,7 +41,61 @@ export class CubeController {
 		]),
 	)
 	async uploadFile(
-		@UploadedFiles() CreateCubeFilesDto: CreateCubeFilesDto,
+		@UploadedFiles() createCubeFilesDto: CreateCubeFilesDto,
 		@Body() createCubeBodyDto: CreateCubeBodyDto,
-	) {}
+		@Req() requset: Request,
+	): Promise<Cube> {
+		return await this.cubeService.createCube(createCubeFilesDto, createCubeBodyDto, requset);
+	}
+
+	@Get('specific/:id')
+	async findOne(@Param() params: { id: string }): Promise<Cube> {
+		return await this.cubeService.findOne(+params.id);
+	}
+
+	@Get()
+	async fincMany(@Query() queries: { show: string }): Promise<Cube[]> {
+		return await this.cubeService.findMany(queries);
+	}
+
+	@UseGuards(AuthGuard)
+	@Post('like')
+	async like(@Req() req, @Body() body: { cubeId: number }) {
+		return this.interactionService.like(req, body);
+	}
+
+	@UseGuards(AuthGuard)
+	@Post('removeLike')
+	async removeLike(@Req() req, @Body() body: { cubeId: number }) {
+		return this.interactionService.removeLike(req, body);
+	}
+
+	@Post('getLikes')
+	async getLikes(@Body() body: { cubeId: number }) {
+		return await this.interactionService.getLikes(body);
+	}
+
+	@UseGuards(AuthGuard)
+	@Post('isLiked')
+	async isLiked(@Req() req, @Body() body: { cubeId: number }): Promise<Boolean> {
+		return await this.interactionService.isLiked(req, body);
+	}
+
+	@Post('likeCount')
+	async likeCount(@Body() body: { cubeId: number }): Promise<number> {
+		return await this.interactionService.likeCount(body);
+	}
+
+	@Get('most-liked')
+	async getCubesWithMostLikes(@Query('page') page: number, @Query('pageSize') pageSize: number) {
+		page = Math.floor(page) || 1;
+		pageSize = Math.floor(pageSize) || 2;
+
+		return this.cubeService.getCubesWithMostLikes(page, pageSize);
+	}
+
+	@Get('count')
+	async getCubeCount() {
+		return this.cubeService.getCubeCount();
+	}
 }
