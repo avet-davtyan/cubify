@@ -1,7 +1,6 @@
-import { Environment, OrbitControls, useTexture, Html } from '@react-three/drei';
+import { Environment, OrbitControls, useTexture } from '@react-three/drei';
 import { Texture } from 'three';
 import texture from '../../../assets/cubifyAv.png';
-import useCreateCubeStore from '../../../store/CreateCubeStore';
 
 const Experience = ({ image }: { image: any }) => {
 	const texture1 = useTexture(image ? (image as string) : texture) as Texture;

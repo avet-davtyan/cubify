@@ -24,4 +24,9 @@ export class UserController {
 	async findOne(@Param() params: { id: string }): Promise<User> {
 		return await this.userService.findOne(+params.id);
 	}
+
+	@Get('find/:username')
+	async findOneByUsername(@Param() params: { username: string }): Promise<User> {
+		return await this.userService.findOneByUsername(params.username);
+	}
 }

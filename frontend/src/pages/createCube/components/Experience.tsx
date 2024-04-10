@@ -1,4 +1,4 @@
-import { Environment, OrbitControls, useTexture, Html } from '@react-three/drei';
+import { Environment, OrbitControls, useTexture } from '@react-three/drei';
 import { Texture } from 'three';
 import texture from '../../../assets/cubecube.png';
 import InputMaterialButton from './InputMaterialButton';

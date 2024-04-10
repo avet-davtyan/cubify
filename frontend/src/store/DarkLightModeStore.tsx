@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import AuthService from '../services/AuthService';
 
 interface useDarkModeState {
 	darkMode: boolean;

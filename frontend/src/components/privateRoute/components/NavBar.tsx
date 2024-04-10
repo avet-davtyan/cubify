@@ -1,32 +1,12 @@
-import {
-	Navbar,
-	NavbarBrand,
-	NavbarContent,
-	NavbarItem,
-	NavbarMenuToggle,
-	NavbarMenu,
-	NavbarMenuItem,
-	Link,
-	Button,
-	Image,
-	Avatar,
-	Chip,
-	User,
-	Input,
-	Dropdown,
-	DropdownItem,
-	DropdownMenu,
-	DropdownTrigger,
-} from '@nextui-org/react';
-import cubifyAv from '../../../assets/rub.webp';
-import { useState } from 'react';
+import { Button, Navbar } from '@nextui-org/react';
 import useAuthStore from '../../../store/AuthStore';
-import { SearchOutlined } from '@ant-design/icons';
-import style from './NavBar.module.scss';
+
 import useDarkModeStore from '../../../store/DarkLightModeStore';
+import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
 	const { user } = useAuthStore();
+	const navigate = useNavigate();
 	const darkModeStore = useDarkModeStore();
 	const pathName = location.pathname;
 	return (
@@ -53,24 +33,30 @@ const NavBar = () => {
 					gap: '20px',
 				}}
 			>
-				<a
-					href="/"
+				<p
 					style={{
+						cursor: 'pointer',
 						opacity: pathName == '/' ? '0.5' : '1',
 						borderBottom: pathName == '/' ? '1px solid' : '',
 					}}
+					onClick={() => {
+						navigate('/');
+					}}
 				>
 					Home
-				</a>
-				<a
-					href="/cubes"
+				</p>
+				<p
 					style={{
+						cursor: 'pointer',
 						opacity: pathName == '/cubes' ? '0.5' : '1',
 						borderBottom: pathName == '/cubes' ? '1px solid' : '',
 					}}
+					onClick={() => {
+						navigate('/cubes');
+					}}
 				>
 					Cubes
-				</a>
+				</p>
 				<a
 					href="/create_cube"
 					style={{

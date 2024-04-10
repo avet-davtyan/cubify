@@ -1,4 +1,3 @@
-import { Button } from '@nextui-org/react';
 import { Html } from '@react-three/drei';
 import { useRef } from 'react';
 import useCreateCubeStore from '../../../store/CreateCubeStore';
@@ -12,7 +11,7 @@ const InputMaterialButton = ({
 }) => {
 	const { previewImages, setPreviewImage, setSide } = useCreateCubeStore();
 	const hiddenFileInput = useRef<any>(null);
-	const handleClick = (event: any) => {
+	const handleClick = () => {
 		hiddenFileInput.current.click();
 	};
 

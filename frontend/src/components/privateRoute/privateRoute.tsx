@@ -1,7 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import { useEffect } from 'react';
-import api from '../../http/base_api';
 import useAuthStore from '../../store/AuthStore';
 import SquareLoader from 'react-spinners/SquareLoader';
 import useCubeStore from '../../store/CubeStore';
@@ -44,11 +43,9 @@ function PrivateRoute() {
 							position: 'absolute',
 							height: '100%',
 							width: '100%',
-							// justifyContent: 'center',
 							alignItems: 'center',
 							display: 'flex',
 							flexDirection: 'column',
-							// paddingTop: '80px',
 							overflow: 'auto',
 						}}
 					>

@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import AuthService from '../services/AuthService';
 import api from '../http/base_api';
 
 interface CubeState {

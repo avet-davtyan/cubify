@@ -87,15 +87,46 @@ export class CubeController {
 	}
 
 	@Get('most-liked')
-	async getCubesWithMostLikes(@Query('page') page: number, @Query('pageSize') pageSize: number) {
+	async getCubesWithMostLikes(
+		@Query('page') page: number,
+		@Query('pageSize') pageSize: number,
+	): Promise<Cube[]> {
 		page = Math.floor(page) || 1;
 		pageSize = Math.floor(pageSize) || 2;
 
 		return this.cubeService.getCubesWithMostLikes(page, pageSize);
 	}
 
+	@Get('latest')
+	async getCubesMostRecentlyPublished(
+		@Query('page') page: number,
+		@Query('pageSize') pageSize: number,
+	): Promise<Cube[]> {
+		page = Math.floor(page) || 1;
+		pageSize = Math.floor(pageSize) || 9;
+
+		return this.cubeService.getCubesMostRecentlyPublished(page, pageSize);
+	}
+
+	@Get('user/:userId')
+	async getCubesByUser(
+		@Query('page') page: number,
+		@Query('pageSize') pageSize: number,
+		@Param() params: { userId: string },
+	) {
+		page = Math.floor(page) || 1;
+		pageSize = Math.floor(pageSize) || 9;
+
+		return this.cubeService.getCubesByUser(+params.userId, page, pageSize);
+	}
+
 	@Get('count')
 	async getCubeCount() {
 		return this.cubeService.getCubeCount();
+	}
+
+	@Get('count/:userId')
+	async getUsersCubeCount(@Param() params: { userId: string }) {
+		return this.cubeService.getUsersCubeCount(+params.userId);
 	}
 }

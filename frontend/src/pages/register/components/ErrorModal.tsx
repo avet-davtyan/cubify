@@ -1,4 +1,4 @@
-import { Chip, Link, Modal, ModalBody, ModalContent, ModalHeader } from '@nextui-org/react';
+import { Modal, ModalContent, ModalHeader } from '@nextui-org/react';
 import React, { Dispatch, SetStateAction } from 'react';
 
 interface ErrorProps {

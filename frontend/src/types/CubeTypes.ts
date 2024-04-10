@@ -14,6 +14,7 @@ export interface Cube {
 	pending?: boolean;
 	description?: string;
 	backgroundColor?: string;
+	createdAt: string;
 	side1: string;
 	side3: string;
 	side4: string;

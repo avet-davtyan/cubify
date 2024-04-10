@@ -1,5 +1,4 @@
 import React from 'react';
-import backImage from '../../assets/cubeBack.png';
 import SignInForm from './components/SignInForm';
 
 const Login: React.FC = () => {

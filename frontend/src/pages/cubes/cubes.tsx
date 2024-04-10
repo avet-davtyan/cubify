@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 import CubeCard from './components/CubeCard';
 import api from '../../http/base_api';
 import { Cube } from '../../types/CubeTypes';
-import { Input, Pagination, Skeleton, Tab, Tabs } from '@nextui-org/react';
+import { Button, Input, Pagination, Skeleton, Tab, Tabs } from '@nextui-org/react';
 import { SearchOutlined } from '@ant-design/icons';
-import ReactPaginate from 'react-paginate';
 import { useSearchParams } from 'react-router-dom';
 import useCubeStore from '../../store/CubeStore';
 
@@ -14,8 +13,16 @@ const Cubes = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const page = searchParams.get('page');
 	const pageSize = searchParams.get('pageSize');
-
-	const [fetchLoading, setFetchLoading] = useState(true);
+	const [selected, setSelected] = useState<'most' | 'last'>('last');
+	const handleSelectionChange = (newSelection: any) => {
+		const selection = newSelection as 'most' | 'last';
+		if (selection === 'most') {
+			fetchMostLiked(page, pageSize);
+		} else if (selection === 'last') {
+			fetchRecentlyPublished(page, pageSize);
+		}
+		setSelected(newSelection);
+	};
 
 	const fetchMostLiked = async (
 		page?: string | number | null,
@@ -27,13 +34,30 @@ const Cubes = () => {
 		setCubes(fetchedCubes);
 	};
 
+	const fetchRecentlyPublished = async (
+		page?: string | number | null,
+		pageSize?: string | number | null,
+	) => {
+		const fetchedCubes = (await api.get(`/cube/latest?page=${page || 1}&pageSize=${pageSize || 9}`))
+			.data;
+		setCubes(fetchedCubes);
+	};
+
 	const handlePageChange = (page: number) => {
 		setSearchParams({ page: page.toString() });
-		fetchMostLiked(page);
+		if (selected === 'most') {
+			fetchMostLiked(page);
+		} else if (selected === 'last') {
+			fetchRecentlyPublished(page);
+		}
 	};
 
 	useEffect(() => {
-		fetchMostLiked(page, pageSize);
+		if (selected === 'most') {
+			fetchMostLiked(page, pageSize);
+		} else if (selected === 'last') {
+			fetchRecentlyPublished(page, pageSize);
+		}
 	}, []);
 	return (
 		<div>
@@ -41,22 +65,18 @@ const Cubes = () => {
 				<Tabs
 					variant="underlined"
 					aria-label="Tabs variants"
+					selectedKey={selected}
+					onSelectionChange={handleSelectionChange}
 				>
 					<Tab
-						key="photos"
+						key="most"
 						title="Most Liked"
 					/>
 					<Tab
-						key="music"
-						title="Last "
+						key="last"
+						title="Recently published"
 					/>
 				</Tabs>
-				<Input
-					placeholder="Type to search..."
-					size="sm"
-					startContent={<SearchOutlined />}
-					type="search"
-				/>
 			</div>
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-5 ">
 				{cubes &&
@@ -86,8 +106,8 @@ const Cubes = () => {
 						initialPage={Number(page) || 1}
 						onChange={handlePageChange}
 						className="gap-2 rounded"
+						color="success"
 						radius="none"
-						color="danger"
 						variant="light"
 					/>
 				</Skeleton>

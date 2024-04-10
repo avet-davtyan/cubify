@@ -8,6 +8,7 @@ import Cubes from './pages/cubes/cubes';
 import { NextUIProvider } from '@nextui-org/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import useDarkModeStore from './store/DarkLightModeStore';
+import UserPage from './pages/user/user';
 
 function App() {
 	const { darkMode } = useDarkModeStore();
@@ -35,6 +36,10 @@ function App() {
 								<Route
 									path="/create_cube"
 									element={<CreateCube />}
+								/>
+								<Route
+									path="/:username"
+									element={<UserPage />}
 								/>
 							</Route>
 

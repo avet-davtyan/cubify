@@ -1,5 +1,4 @@
 import React from 'react';
-import backImage from '../../assets/cubeBack.png';
 import Welcome from './components/Welcome';
 import SignUpForm from './components/SignUpForm';
 import { useState } from 'react';

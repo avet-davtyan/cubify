@@ -1,7 +1,6 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { LoginData } from '../../../types/AuthTypes';
-import AuthService from '../../../services/AuthService';
-import { Button, Card, Chip, Image, Input, Link } from '@nextui-org/react';
+import { Button, Card, Image, Input, Link } from '@nextui-org/react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
 import cubifyAv from '../../../assets/rub.webp';
 import { Formik } from 'formik';

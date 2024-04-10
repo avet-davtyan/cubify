@@ -97,7 +97,7 @@ export class CubeService {
 		return cubes;
 	}
 
-	async getCubesWithMostLikes(page: number = 1, pageSize: number = 20): Promise<Cube[]> {
+	async getCubesWithMostLikes(page: number = 1, pageSize: number = 9): Promise<Cube[]> {
 		const cubesWithLikes = await this.prismaService.cube.findMany({
 			take: pageSize,
 			skip: (page - 1) * pageSize,
@@ -113,7 +113,7 @@ export class CubeService {
 		return cubesWithLikes;
 	}
 
-	async getCubesMostRecentlyPublished(page: number = 1, pageSize: number = 20): Promise<Cube[]> {
+	async getCubesMostRecentlyPublished(page: number = 1, pageSize: number = 9): Promise<Cube[]> {
 		const cubesMostRecentlyPublished = await this.prismaService.cube.findMany({
 			take: pageSize,
 			skip: (page - 1) * pageSize,
@@ -127,6 +127,35 @@ export class CubeService {
 	async getCubeCount(): Promise<number> {
 		const cubeCount = await this.prismaService.cube.count();
 		return cubeCount;
+	}
+
+	async getCubesByUser(userId: number, page: number = 1, pageSize: number = 9): Promise<Cube[]> {
+		const cubes = await this.prismaService.cube.findMany({
+			where: {
+				ownerId: userId,
+			},
+			orderBy: {
+				createdAt: 'desc',
+			},
+			skip: (page - 1) * pageSize,
+			take: pageSize,
+		});
+
+		if (!cubes) {
+			throw new NotFoundException();
+		}
+
+		return cubes;
+	}
+
+	async getUsersCubeCount(userId: number): Promise<number> {
+		const count = this.prismaService.cube.count({
+			where: {
+				ownerId: userId,
+			},
+		});
+
+		return count;
 	}
 
 	sideImageMap = {
