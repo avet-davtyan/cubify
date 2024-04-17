@@ -6,6 +6,7 @@ import { PassService } from './services/pass.service';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants/constants';
 import { RefreshTokenStrategy } from './refreshToken.strategy';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Global()
 @Module({
@@ -17,6 +18,6 @@ import { RefreshTokenStrategy } from './refreshToken.strategy';
 		}),
 	],
 	controllers: [AuthController],
-	providers: [AuthService, PassService, IsUniqueValidation, RefreshTokenStrategy],
+	providers: [AuthService, PassService, IsUniqueValidation, RefreshTokenStrategy, GoogleStrategy],
 })
 export class AuthModule {}

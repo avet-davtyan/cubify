@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from 'src/auth/types/user.types';
+import { GoogleUser, User } from 'src/auth/types/user.types';
 
 @Controller('user')
 export class UserController {
@@ -21,8 +21,8 @@ export class UserController {
 		private prismaService: PrismaService,
 	) {}
 	@Get(':id')
-	async findOne(@Param() params: { id: string }): Promise<User> {
-		return await this.userService.findOne(+params.id);
+	async findOne(@Param() params: { id: string }): Promise<User | GoogleUser> {
+		return await this.userService.findOne(params.id);
 	}
 
 	@Get('find/:username')

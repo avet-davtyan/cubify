@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { jwtConstants } from '../constants/constants';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuardJWT implements CanActivate {
 	constructor(private jwtService: JwtService) {}
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest();
@@ -17,7 +17,7 @@ export class AuthGuard implements CanActivate {
 			const payload = await this.jwtService.verifyAsync(token, {
 				secret: jwtConstants.secret,
 			});
-			request['user'] = payload;
+			request['payload'] = payload;
 		} catch {
 			throw new UnauthorizedException();
 		}

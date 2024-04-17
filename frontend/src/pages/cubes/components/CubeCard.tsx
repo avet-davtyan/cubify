@@ -1,4 +1,13 @@
-import { Avatar, Divider, Skeleton } from '@nextui-org/react';
+import {
+	Avatar,
+	Button,
+	Card,
+	CardBody,
+	CardFooter,
+	CardHeader,
+	Divider,
+	Skeleton,
+} from '@nextui-org/react';
 import { Cube } from '../../../types/CubeTypes';
 import { useEffect, useState } from 'react';
 import { User } from '../../../types/UserTypes';
@@ -7,9 +16,11 @@ import CubeCanvas from './components/CubeCanvas';
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import useAuthStore from '../../../store/AuthStore';
 import { useNavigate } from 'react-router-dom';
+import CubeLoader from './components/CubeLoader';
+import { GoogleUser } from '../../../types/AuthTypes';
 
 const CubeCard = ({ cube }: { cube: Cube }) => {
-	const [owner, setOwner] = useState<User | null>(null);
+	const [owner, setOwner] = useState<GoogleUser | null>(null);
 	const [liked, setLiked] = useState<boolean | null>(null);
 	const [likeCount, setLikeCount] = useState<number | null>(null);
 	const [cubeLoaded, setCubeLoaded] = useState<boolean>(false);
@@ -23,7 +34,11 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 		const month = String(date.getMonth() + 1).padStart(2, '0');
 		const year = date.getFullYear();
 
-		return `${day} - ${month} - ${year}`;
+		return `${day} / ${month} / ${year}`;
+	};
+
+	const navigateToOwner = () => {
+		navigate(`/${owner?.id}/`);
 	};
 
 	const likeHandler = () => {
@@ -48,17 +63,12 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 
 	useEffect(() => {
 		api
-			.get<User>('/user/' + cube.ownerId)
+			.get<GoogleUser>('/user/' + cube.ownerId)
 			.then((response) => {
 				setOwner(response.data);
 			})
 			.catch(() => {
-				setOwner({
-					id: 0,
-					username: '404 Not Found',
-					email: '404 Not Found',
-					fullName: '404 Not Found',
-				});
+				setOwner(null);
 			});
 
 		api
@@ -77,64 +87,71 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 	}, []);
 	return (
 		<>
-			<div>
-				<div
-					style={{
-						width: '300px',
-						padding: '10px',
-						display: 'flex',
-						flexDirection: 'column',
-						// border: '1px solid rgba(255,255,255,0.2)',
-						backgroundColor: '#101010',
-						gap: '10px',
-					}}
-				>
+			<Card
+				className="px-3 pt-3"
+				style={{
+					maxWidth: '300px',
+				}}
+			>
+				<CardHeader className="justify-between">
+					<Skeleton isLoaded={owner ? true : false}>
+						<div
+							className="flex gap-5 cursor-pointer p-1"
+							onClick={navigateToOwner}
+						>
+							<Avatar
+								radius="full"
+								size="md"
+								src={owner?.avatar}
+								isBordered
+							/>
+							<div className="flex flex-col gap-1 items-start justify-center">
+								<h4 className="text-small font-semibold leading-none text-default-600">
+									{owner?.fullName}
+								</h4>
+								<h5 className="text-small tracking-tight text-default-400">
+									{'@' + owner?.username}
+								</h5>
+							</div>
+						</div>
+					</Skeleton>
+				</CardHeader>
+				<CardBody className="px-3 py-0 ">
+					<div className="flex justify-between my-3">
+						<p className="opacity-100 text-small">{cube.name}</p>
+						<p className=" font-thin font-sans text-small">{getDate(cube.createdAt)}</p>
+					</div>
+
 					<div
 						style={{
+							width: '100%',
+							aspectRatio: '1',
+							overflow: 'hidden',
 							display: 'flex',
-							flexDirection: 'column',
-							gap: '2px',
+							justifyContent: 'center',
+							alignItems: 'center',
+							position: 'relative',
 						}}
 					>
-						<Skeleton isLoaded={owner ? true : false}>
+						{!cubeLoaded && (
 							<div
-								className="flex p-2 gap-4 cursor-pointer"
-								onClick={() => {
-									navigate(`/${owner?.username}/`);
+								style={{
+									height: '100%',
+									width: '100%',
+									position: 'absolute',
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
 								}}
 							>
-								<Avatar />
-								<div>
-									<p>{owner?.fullName}</p>
-									<p
-										style={{
-											opacity: '0.4',
-											fontSize: '12px',
-										}}
-									>
-										{owner?.username}
-									</p>
-								</div>
+								<CubeLoader />
 							</div>
-						</Skeleton>
-					</div>
-
-					<Divider />
-					<div className="flex justify-between ">
-						<p>{cube.name}</p>
-						<p className="opacity-50 font-thin font-sans">{getDate(cube.createdAt)}</p>
-					</div>
-					<Skeleton isLoaded={cubeLoaded}>
+						)}
 						<div
+							className={cubeLoaded ? 'opacity-100' : 'opacity-0'}
 							style={{
+								height: '100%',
 								width: '100%',
-								aspectRatio: '1',
-
-								overflow: 'hidden',
-								display: 'flex',
-								justifyContent: 'center',
-								alignItems: 'center',
-								position: 'relative',
 							}}
 						>
 							<CubeCanvas
@@ -142,8 +159,9 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 								setCubeLoaded={setCubeLoaded}
 							/>
 						</div>
-					</Skeleton>
-
+					</div>
+				</CardBody>
+				<CardFooter>
 					<div
 						style={{
 							width: '100%',
@@ -174,8 +192,8 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 							</Skeleton>
 						)}
 					</div>
-				</div>
-			</div>
+				</CardFooter>
+			</Card>
 		</>
 	);
 };

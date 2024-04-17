@@ -9,9 +9,25 @@ import { AuthMiddleware } from './app.middleware';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { UserModule } from './user/user.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { RewriteApiEndpointMiddleware } from './auth/middlewares/redirect.middleware';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
 	imports: [
+		MailerModule.forRoot({
+			transport: {
+				service: 'gmail',
+				host: 'smpt.gmail.com',
+				port: 587,
+				secure: false,
+				// use SSL
+				auth: {
+					user: 'avetdavtyan04@gmail.com',
+					pass: 'Tiezerakan007',
+				},
+			},
+		}),
 		AuthModule,
 		PrismaModule,
 		CubeModule,
@@ -25,9 +41,9 @@ import { UserModule } from './user/user.module';
 	providers: [UserService],
 })
 export class AppModule {
-	// configure(consumer: MiddlewareConsumer) {
-	// 	consumer
-	// 		.apply(AuthMiddleware) // Apply your custom middleware
-	// 		.forRoutes({ path: '/cube_images/*', method: RequestMethod.ALL });
-	// }
+	configure(consumer: MiddlewareConsumer) {
+		consumer
+			.apply(RewriteApiEndpointMiddleware) // Apply your custom middleware
+			.forRoutes('/');
+	}
 }

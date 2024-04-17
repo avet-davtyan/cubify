@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
-import { AuthGuard } from 'src/auth/guards/auth.guard'; // Import your AuthGuard
 import { jwtConstants } from './auth/constants/constants';
 
 @Injectable()

@@ -8,7 +8,6 @@ import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import useAuthStore from '../../../store/AuthStore';
 
 const CubeCard = ({ cube }: { cube: Cube }) => {
-	const [owner, setOwner] = useState<User | null>(null);
 	const [liked, setLiked] = useState<boolean | null>(null);
 	const [likeCount, setLikeCount] = useState<number | null>(null);
 	const [cubeLoaded, setCubeLoaded] = useState<boolean>(false);
@@ -35,21 +34,17 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 		}
 	};
 
-	useEffect(() => {
-		api
-			.get<User>('/user/' + cube.ownerId)
-			.then((response) => {
-				setOwner(response.data);
-			})
-			.catch(() => {
-				setOwner({
-					id: 0,
-					username: '404 Not Found',
-					email: '404 Not Found',
-					fullName: '404 Not Found',
-				});
-			});
+	const getDate = (dateString: string): string => {
+		const date = new Date(dateString);
 
+		const day = String(date.getDate()).padStart(2, '0');
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const year = date.getFullYear();
+
+		return `${day} / ${month} / ${year}`;
+	};
+
+	useEffect(() => {
 		api
 			.post('/cube/isLiked', { cubeId: cube.id })
 			.then((response) => {
@@ -84,7 +79,25 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 						setHover(false);
 					}}
 				>
-					{/* <p>{cube.name}</p> */}
+					<div>
+						<p
+							style={{
+								transition: '0.1s all',
+								fontSize: cubeLoaded && hover ? '' : '0',
+							}}
+						>
+							{cube.name}
+						</p>
+						<p
+							style={{
+								transition: '0.1s all',
+								fontSize: cubeLoaded && hover ? '12px' : '0',
+								fontWeight: 'lighter',
+							}}
+						>
+							{getDate(cube.createdAt)}
+						</p>
+					</div>
 					<Skeleton isLoaded={cubeLoaded}>
 						<div
 							style={{
@@ -107,38 +120,37 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 						</div>
 					</Skeleton>
 
-					{hover && (
-						<div
-							style={{
-								width: '100%',
-								display: 'flex',
-								alignItems: 'center',
-								justifyContent: 'space-between',
-							}}
-						>
-							<Skeleton isLoaded={likeCount !== null}>
-								<p
+					<div
+						style={{
+							width: cubeLoaded && hover ? '100%' : '0',
+							transition: '0.3s all',
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+						}}
+					>
+						<Skeleton isLoaded={likeCount !== null}>
+							<p
+								style={{
+									opacity: '0.4',
+								}}
+							>
+								{likeCount} likes
+							</p>
+						</Skeleton>
+						{isAuth && (
+							<Skeleton isLoaded={liked !== null}>
+								<button
 									style={{
-										opacity: '0.4',
+										padding: '10px',
 									}}
+									onClick={likeHandler}
 								>
-									{likeCount} likes
-								</p>
+									{liked ? <LikeFilled /> : <LikeOutlined />}
+								</button>
 							</Skeleton>
-							{isAuth && (
-								<Skeleton isLoaded={liked !== null}>
-									<button
-										style={{
-											padding: '10px',
-										}}
-										onClick={likeHandler}
-									>
-										{liked ? <LikeFilled /> : <LikeOutlined />}
-									</button>
-								</Skeleton>
-							)}
-						</div>
-					)}
+						)}
+					</div>
 				</div>
 			</div>
 		</>

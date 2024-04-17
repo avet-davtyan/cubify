@@ -78,7 +78,7 @@ const Cubes = () => {
 					/>
 				</Tabs>
 			</div>
-			<div className="grid grid-cols-1 lg:grid-cols-3 gap-5 ">
+			<div className="grid grid-cols-1 lg:grid-cols-3 gap-10 ">
 				{cubes &&
 					cubes.map((_cube) => (
 						<CubeCard
@@ -94,21 +94,17 @@ const Cubes = () => {
 					display: 'flex',
 					justifyContent: 'center',
 				}}
-				className="my-5"
+				className="my-10"
 			>
 				<Skeleton isLoaded={cubeStore.cubeCount !== null}>
 					<Pagination
-						disableCursorAnimation
 						showControls
+						isCompact
 						total={
 							cubeStore.cubeCount ? Math.ceil(cubeStore.cubeCount / (Number(pageSize) || 9)) : 0
 						}
 						initialPage={Number(page) || 1}
 						onChange={handlePageChange}
-						className="gap-2 rounded"
-						color="success"
-						radius="none"
-						variant="light"
 					/>
 				</Skeleton>
 			</div>

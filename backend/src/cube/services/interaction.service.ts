@@ -6,10 +6,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class InteractionService {
 	constructor(private prismaService: PrismaService) {}
 	async like(req, body: { cubeId: number }) {
-		const user = req.user as User;
+		const payload = req['payload'] as { id: string };
 		const existingLike = await this.prismaService.like.findFirst({
 			where: {
-				userId: user.id,
+				userId: payload.id,
 				cubeId: body.cubeId,
 			},
 		});
@@ -18,17 +18,17 @@ export class InteractionService {
 		}
 		const newLike = await this.prismaService.like.create({
 			data: {
-				userId: user.id,
+				userId: payload.id,
 				cubeId: body.cubeId,
 			},
 		});
 	}
 
 	async removeLike(req, body: { cubeId: number }) {
-		const user = req.user as User;
+		const payload = req['payload'] as { id: string };
 		const existingLike = await this.prismaService.like.findFirst({
 			where: {
-				userId: user.id,
+				userId: payload.id,
 				cubeId: body.cubeId,
 			},
 		});
@@ -37,7 +37,7 @@ export class InteractionService {
 		}
 		await this.prismaService.like.deleteMany({
 			where: {
-				userId: user.id,
+				userId: payload.id,
 				cubeId: body.cubeId,
 			},
 		});
@@ -54,10 +54,10 @@ export class InteractionService {
 	}
 
 	async isLiked(req, body: { cubeId: number }): Promise<Boolean> {
-		const user = req.user as User;
+		const payload = req['payload'] as { id: string };
 		const like = await this.prismaService.like.findFirst({
 			where: {
-				userId: user.id,
+				userId: payload.id,
 				cubeId: body.cubeId,
 			},
 		});

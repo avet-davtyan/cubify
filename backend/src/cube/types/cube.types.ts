@@ -1,6 +1,6 @@
 export interface Cube {
 	id: number;
-	ownerId: number;
+	ownerId: string;
 	name: string;
 	createdAt: Date;
 	description?: string;

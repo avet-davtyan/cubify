@@ -10,3 +10,6 @@ studio:
 migrateName := last
 migrate:
 	docker compose exec -it backend npx prisma migrate dev --name $(migrateName)
+
+db:
+	docker exec -it cubify_db_dev psql -U postgres cubify

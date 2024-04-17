@@ -17,7 +17,7 @@ import { Request } from 'express';
 import { CreateCubeBodyDto, CreateCubeFilesDto } from './dtos/CreateCube.dto';
 import { CubeService } from './cube.service';
 import { CreateCubeGuard } from './guards/createCube.guard';
-import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { AuthGuardJWT } from 'src/auth/guards/auth.guard';
 import { Cube } from './types/cube.types';
 import { InteractionService } from './services/interaction.service';
 
@@ -28,7 +28,7 @@ export class CubeController {
 		private interactionService: InteractionService,
 	) {}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuardJWT)
 	@Post('create_cube')
 	@UseInterceptors(
 		FileFieldsInterceptor([
@@ -58,13 +58,13 @@ export class CubeController {
 		return await this.cubeService.findMany(queries);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuardJWT)
 	@Post('like')
 	async like(@Req() req, @Body() body: { cubeId: number }) {
 		return this.interactionService.like(req, body);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuardJWT)
 	@Post('removeLike')
 	async removeLike(@Req() req, @Body() body: { cubeId: number }) {
 		return this.interactionService.removeLike(req, body);
@@ -75,7 +75,7 @@ export class CubeController {
 		return await this.interactionService.getLikes(body);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuardJWT)
 	@Post('isLiked')
 	async isLiked(@Req() req, @Body() body: { cubeId: number }): Promise<Boolean> {
 		return await this.interactionService.isLiked(req, body);
@@ -117,7 +117,7 @@ export class CubeController {
 		page = Math.floor(page) || 1;
 		pageSize = Math.floor(pageSize) || 9;
 
-		return this.cubeService.getCubesByUser(+params.userId, page, pageSize);
+		return this.cubeService.getCubesByUser(params.userId, page, pageSize);
 	}
 
 	@Get('count')
@@ -127,6 +127,6 @@ export class CubeController {
 
 	@Get('count/:userId')
 	async getUsersCubeCount(@Param() params: { userId: string }) {
-		return this.cubeService.getUsersCubeCount(+params.userId);
+		return this.cubeService.getUsersCubeCount(params.userId);
 	}
 }

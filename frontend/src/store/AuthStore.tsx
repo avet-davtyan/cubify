@@ -1,10 +1,11 @@
 import { create } from 'zustand';
 import AuthService from '../services/AuthService';
+import { GoogleUser, User } from '../types/AuthTypes';
 
 interface AuthState {
 	isAuth: boolean;
 	isLoading: boolean;
-	user: { id: number; username: string; email: string; fullName: string } | null;
+	user: User | GoogleUser | null;
 	setAuth: (bool: boolean) => void;
 	setLoading: (bool: boolean) => void;
 	login: (emailOrUsername: string, password: string) => void;
@@ -56,7 +57,9 @@ const useAuthStore = create<AuthState>((set) => ({
 	verify: async () => {
 		try {
 			const response = await AuthService.verify();
-			set(() => ({ isAuth: true, user: response.data }));
+			console.log(response.data);
+			const user = response.data as GoogleUser | User;
+			set(() => ({ isAuth: true, user: user }));
 		} catch (e) {
 			// console.log(e);
 		}

@@ -25,6 +25,8 @@ const CubeEnvironment = ({
 	const [side5, setSide5] = useState<null | string>(null);
 	const [side6, setSide6] = useState<null | string>(null);
 
+	const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
 	const texture1 = useTexture(side1 ? (side1 as string) : defaultTexture) as Texture;
 	const texture2 = useTexture(side2 ? (side2 as string) : defaultTexture) as Texture;
 	const texture3 = useTexture(side3 ? (side3 as string) : defaultTexture) as Texture;
@@ -33,7 +35,6 @@ const CubeEnvironment = ({
 	const texture6 = useTexture(side6 ? (side6 as string) : defaultTexture) as Texture;
 
 	const fetchSidesWithPromises = () => {
-		console.log('j');
 		const promises = [];
 
 		if (cube.side1) {
@@ -100,16 +101,10 @@ const CubeEnvironment = ({
 
 		Promise.all(promises)
 			.then(() => {
-				console.log('ok');
 				setCubeLoaded(true);
+				setIsLoaded(true);
 			})
-			.catch((e: any) => {
-				console.log('error');
-				console.log(e);
-			})
-			.finally(() => {
-				console.log('finished');
-			});
+			.catch(() => {});
 	};
 
 	useEffect(() => {
@@ -117,7 +112,7 @@ const CubeEnvironment = ({
 	}, []);
 	return (
 		<>
-			<OrbitControls />
+			<OrbitControls enableZoom={false} />
 			<Environment preset="city" />
 
 			<mesh
@@ -125,8 +120,8 @@ const CubeEnvironment = ({
 				position={[0, 0, 0]}
 				ref={cubeRef}
 			>
-				<boxGeometry />
-				<meshStandardMaterial />
+				{isLoaded && <boxGeometry />}
+
 				{side1 && (
 					<meshStandardMaterial
 						map={texture1}

@@ -4,7 +4,7 @@ import { Cube } from './types/cube.types';
 import { Request } from 'express';
 import { join, extname } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from 'src/auth/types/user.types';
+import { User, userAuthentication } from 'src/auth/types/user.types';
 import * as fs from 'fs';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CubeService {
 		createCubeBodyDto: CreateCubeBodyDto,
 		request: Request,
 	): Promise<Cube> {
-		const user = request.user as User;
+		const payload = request['payload'] as { id: string };
 
 		for (const image in createCubeFilesDto) {
 			if (this.extensions.includes(extname(createCubeFilesDto[image][0].originalname))) {
@@ -29,7 +29,7 @@ export class CubeService {
 
 		const createdCube = await this.prismaService.cube.create({
 			data: {
-				owner: { connect: { id: user.id } },
+				owner: { connect: { id: payload.id } },
 				name: createCubeBodyDto.name,
 				description: createCubeBodyDto.description,
 				backgroundColor: createCubeBodyDto.backgroundColor,
@@ -129,7 +129,7 @@ export class CubeService {
 		return cubeCount;
 	}
 
-	async getCubesByUser(userId: number, page: number = 1, pageSize: number = 9): Promise<Cube[]> {
+	async getCubesByUser(userId: string, page: number = 1, pageSize: number = 9): Promise<Cube[]> {
 		const cubes = await this.prismaService.cube.findMany({
 			where: {
 				ownerId: userId,
@@ -148,7 +148,7 @@ export class CubeService {
 		return cubes;
 	}
 
-	async getUsersCubeCount(userId: number): Promise<number> {
+	async getUsersCubeCount(userId: string): Promise<number> {
 		const count = this.prismaService.cube.count({
 			where: {
 				ownerId: userId,

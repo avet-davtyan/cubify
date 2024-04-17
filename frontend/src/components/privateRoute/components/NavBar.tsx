@@ -1,4 +1,4 @@
-import { Button, Navbar } from '@nextui-org/react';
+import { Avatar, Button, Navbar } from '@nextui-org/react';
 import useAuthStore from '../../../store/AuthStore';
 
 import useDarkModeStore from '../../../store/DarkLightModeStore';
@@ -10,7 +10,12 @@ const NavBar = () => {
 	const darkModeStore = useDarkModeStore();
 	const pathName = location.pathname;
 	return (
-		<Navbar isBordered>
+		<Navbar
+			isBordered
+			style={{
+				backgroundColor: 'rgba(0,0,0,0.001)',
+			}}
+		>
 			<div
 				style={{
 					display: 'flex',
@@ -82,14 +87,6 @@ const NavBar = () => {
 						gap: '15px',
 					}}
 				>
-					<button
-						onClick={() => {
-							console.log('hi');
-							darkModeStore.setDarkMode(!darkModeStore.darkMode);
-						}}
-					>
-						darkMode
-					</button>
 					<p
 						style={{
 							opacity: '0.7',
@@ -97,6 +94,7 @@ const NavBar = () => {
 					>
 						{user?.fullName}
 					</p>
+					<Avatar src={user?.avatar} />
 				</div>
 			</div>
 		</Navbar>

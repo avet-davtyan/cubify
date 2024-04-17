@@ -10,7 +10,6 @@ services:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     env_file:
       - .env
-
   pgadmin:
     container_name: cubify_pgadmin
     image: dpage/pgadmin4:latest

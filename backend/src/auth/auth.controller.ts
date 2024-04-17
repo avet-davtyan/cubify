@@ -1,12 +1,29 @@
-import { Controller, Post, Body, UsePipes, ValidationPipe, UseGuards, Req } from '@nestjs/common';
+import {
+	Controller,
+	Post,
+	Get,
+	Body,
+	UsePipes,
+	ValidationPipe,
+	UseGuards,
+	Req,
+	Res,
+	Redirect,
+} from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { AuthService } from './auth.service';
 import { User } from './types/user.types';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuardJWT } from './guards/auth.guard';
+import { MailerService } from '@nestjs-modules/mailer';
+import { AuthGuard } from '@nestjs/passport';
+import * as express from 'express';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private authService: AuthService) {}
+	constructor(
+		private authService: AuthService,
+		private mailerService: MailerService,
+	) {}
 
 	@Post('register')
 	@UsePipes(ValidationPipe)
@@ -22,10 +39,24 @@ export class AuthController {
 		return await this.authService.login(loginUserDto);
 	}
 
-	@UseGuards(AuthGuard)
+	@UseGuards(AuthGuardJWT)
 	@Post('verify')
 	async verify(@Req() req) {
 		return this.authService.verify(req);
+	}
+
+	@Get('send-mail')
+	async sendMail() {
+		console.log('start sending');
+		await this.mailerService.sendMail({
+			to: 'avetdavtyan04@gmail.com',
+			subject: 'Verify Your Email Address',
+			template: 'verification',
+			context: {
+				verificationLink: 'aaaa',
+			},
+		});
+		return 'ok	';
 	}
 
 	@Post('refresh')
@@ -33,5 +64,15 @@ export class AuthController {
 		@Body() refreshPayLoad: { refreshToken: string },
 	): Promise<{ accessToken: string }> {
 		return await this.authService.refresh(refreshPayLoad.refreshToken);
+	}
+
+	@Get('/google')
+	@UseGuards(AuthGuard('google'))
+	async googleAuth(@Req() req) {}
+
+	@Get('/google/callback')
+	@UseGuards(AuthGuard('google'))
+	googleAuthRedirect(@Req() req, @Res() res) {
+		return this.authService.googleLogin(req, res);
 	}
 }

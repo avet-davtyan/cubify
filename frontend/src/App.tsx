@@ -38,7 +38,7 @@ function App() {
 									element={<CreateCube />}
 								/>
 								<Route
-									path="/:username"
+									path="/:userId"
 									element={<UserPage />}
 								/>
 							</Route>

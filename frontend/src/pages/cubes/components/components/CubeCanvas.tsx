@@ -17,7 +17,7 @@ const CubeCanvas = ({
 		>
 			<color
 				attach="background"
-				args={['#101010']}
+				args={['rgb(24, 24, 27)']}
 			/>
 			<CubeEnvironment
 				cube={cube}

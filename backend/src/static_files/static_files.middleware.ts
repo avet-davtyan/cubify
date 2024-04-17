@@ -1,10 +1,10 @@
 import { Injectable, NestMiddleware, ForbiddenException } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { AuthGuard } from 'src/auth/guards/auth.guard'; // Import your AuthGuard
+import { AuthGuardJWT } from 'src/auth/guards/auth.guard'; // Import your AuthGuard
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-	constructor(private authGuard: AuthGuard) {}
+	constructor(private authGuard: AuthGuardJWT) {}
 
 	async use(req: Request, res: Response, next: NextFunction) {
 		try {

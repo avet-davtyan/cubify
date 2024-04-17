@@ -4,7 +4,7 @@ import { User } from '../../types/UserTypes';
 import api from '../../http/base_api';
 import { Cube } from '../../types/CubeTypes';
 import CubeCard from './components/CubeCard';
-import { Pagination, Skeleton } from '@nextui-org/react';
+import { Avatar, Button, Card, CardHeader, Image, Pagination, Skeleton } from '@nextui-org/react';
 
 const UserPage: React.FC = () => {
 	const { username } = useParams();
@@ -25,12 +25,15 @@ const UserPage: React.FC = () => {
 	};
 
 	const fetchCount = async () => {
-		const fethedCount = (await api.get(`/cube/count/${user?.id}`)).data;
-		setCubeCount(fethedCount);
+		try {
+			const fethedCount = (await api.get(`/cube/count/${user?.id}`)).data;
+			setCubeCount(fethedCount);
+		} catch {}
 	};
 
 	const handlePageChange = (page: number) => {
 		setSearchParams({ page: page.toString() });
+		fetchCount();
 		fetchMyCubes(page);
 	};
 
@@ -68,76 +71,90 @@ const UserPage: React.FC = () => {
 				</div>
 			)}
 			{user && !errorText && (
-				<div>
+				<div
+					style={{
+						minWidth: cubeCount == 0 ? '1000px' : '',
+					}}
+				>
 					<div
 						style={{
+							padding: '30px',
 							width: '100%',
 							display: 'flex',
-							justifyContent: 'center',
+							justifyContent: 'space-between',
+							alignItems: 'center',
 						}}
 					>
-						<div
-							style={{
-								display: 'flex',
-								flexDirection: 'column',
-								alignItems: 'center',
-								border: '1px solid rgba(255,255,255,0.2)',
+						<div className="flex gap-5 cursor-pointer">
+							<Avatar
+								radius="full"
+								size="md"
+							/>
+							<div className="flex flex-col gap-1 items-start justify-center">
+								<h4 className="text-small font-semibold leading-none text-default-600">
+									{user?.fullName}
+								</h4>
+								<h5 className="text-small tracking-tight text-default-400">
+									{'@' + user?.username}
+								</h5>
+							</div>
+						</div>
 
-								padding: '40px',
-								margin: '20px',
-							}}
-						>
-							<p>{user.fullName}</p>
-							<p
+						{cubeCount !== null && cubeCount !== 0 && <p>{cubeCount} Cubes</p>}
+					</div>
+					{cubeCount !== 0 ? (
+						<div>
+							<div className="flex gap-5 "></div>
+							<div
+								className="grid grid-cols-1 lg:grid-cols-3 gap-0 "
 								style={{
-									opacity: '50%',
-									fontSize: '13px',
+									transition: 'all 0.3s',
 								}}
 							>
-								{user.username}
-							</p>
-						</div>
-					</div>
-					<div>
-						<div className="flex gap-5 "></div>
-						<div
-							className="grid grid-cols-1 lg:grid-cols-3 gap-0 "
-							style={{
-								transition: 'all 0.3s',
-							}}
-						>
-							{cubes &&
-								cubes.map((_cube) => (
-									<CubeCard
-										cube={_cube}
-										key={_cube.id}
+								{cubes &&
+									cubes.map((_cube) => (
+										<CubeCard
+											cube={_cube}
+											key={_cube.id}
+										/>
+									))}
+							</div>
+							<div
+								style={{
+									width: '100%',
+
+									display: 'flex',
+									justifyContent: 'center',
+								}}
+								className="my-5"
+							>
+								<Skeleton isLoaded={cubeCount !== null}>
+									<Pagination
+										showControls
+										isCompact
+										total={cubeCount ? Math.ceil(cubeCount / (Number(pageSize) || 9)) : 0}
+										// initialPage={Number(page) || 1}
+
+										onChange={handlePageChange}
 									/>
-								))}
+								</Skeleton>
+							</div>
 						</div>
+					) : (
 						<div
 							style={{
 								width: '100%',
-
+								height: '80vh',
 								display: 'flex',
 								justifyContent: 'center',
+								alignItems: 'center',
 							}}
-							className="my-5"
 						>
-							<Skeleton isLoaded={cubeCount !== null}>
-								<Pagination
-									disableCursorAnimation
-									showControls
-									total={cubeCount ? Math.ceil(cubeCount / (Number(pageSize) || 9)) : 0}
-									initialPage={Number(page) || 1}
-									onChange={handlePageChange}
-									className="gap-2 rounded"
-									radius="none"
-									color="danger"
-									variant="light"
-								/>
-							</Skeleton>
+							<p>No</p>
+							<img src="/empty.gif" />
+							<p>Cubes</p>
 						</div>
-					</div>
+					)}
 				</div>
 			)}
 		</>
