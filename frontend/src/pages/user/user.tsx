@@ -5,10 +5,13 @@ import api from '../../http/base_api';
 import { Cube } from '../../types/CubeTypes';
 import CubeCard from './components/CubeCard';
 import { Avatar, Button, Card, CardHeader, Image, Pagination, Skeleton } from '@nextui-org/react';
+import { GeneralUser } from '../../types/AuthTypes';
+import useAuthStore from '../../store/AuthStore';
 
 const UserPage: React.FC = () => {
 	const { username } = useParams();
-	const [user, setUser] = useState<User | null>(null);
+	const authStore = useAuthStore();
+	const [user, setUser] = useState<GeneralUser | null>(null);
 	const [errorText, setErrorText] = useState<string | null>(null);
 	const [cubes, setCubes] = useState<null | Cube[]>(null);
 	const [cubeCount, setCubeCount] = useState<null | number>(null);
@@ -16,6 +19,8 @@ const UserPage: React.FC = () => {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const page = searchParams.get('page');
 	const pageSize = searchParams.get('pageSize');
+
+	const personal: boolean = user?.id === authStore.user?.id;
 
 	const fetchMyCubes = async (page?: string | number | null, pageSize?: string | number | null) => {
 		const fetchedCubes = (
@@ -83,20 +88,21 @@ const UserPage: React.FC = () => {
 							display: 'flex',
 							justifyContent: 'space-between',
 							alignItems: 'center',
+							background: personal ? 'linear-gradient(to right, #8360c3, #2ebf91)' : '',
 						}}
+						className="rounded mt-4"
 					>
 						<div className="flex gap-5 cursor-pointer">
 							<Avatar
 								radius="full"
 								size="md"
+								src={user?.avatar}
 							/>
 							<div className="flex flex-col gap-1 items-start justify-center">
 								<h4 className="text-small font-semibold leading-none text-default-600">
 									{user?.fullName}
 								</h4>
-								<h5 className="text-small tracking-tight text-default-400">
-									{'@' + user?.username}
-								</h5>
+								<h5 className="text-small ">{user?.username}</h5>
 							</div>
 						</div>
 

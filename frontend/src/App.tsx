@@ -9,6 +9,7 @@ import { NextUIProvider } from '@nextui-org/react';
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import useDarkModeStore from './store/DarkLightModeStore';
 import UserPage from './pages/user/user';
+import CreateUsername from './pages/createUsername/createUsername';
 
 function App() {
 	const { darkMode } = useDarkModeStore();
@@ -38,7 +39,7 @@ function App() {
 									element={<CreateCube />}
 								/>
 								<Route
-									path="/:userId"
+									path="/:username"
 									element={<UserPage />}
 								/>
 							</Route>
@@ -50,6 +51,10 @@ function App() {
 							<Route
 								path="/register"
 								element={<Register />}
+							/>
+							<Route
+								path="/createusername"
+								element={<CreateUsername />}
 							/>
 						</Routes>
 					</BrowserRouter>

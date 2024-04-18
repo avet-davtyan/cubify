@@ -1,14 +1,16 @@
-import { Outlet, useSearchParams } from 'react-router-dom';
+import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import NavBar from './components/NavBar';
 import { useEffect } from 'react';
 import useAuthStore from '../../store/AuthStore';
 import SquareLoader from 'react-spinners/SquareLoader';
 import useCubeStore from '../../store/CubeStore';
+import { AxiosError, isAxiosError } from 'axios';
 
 function PrivateRoute() {
 	const authStore = useAuthStore();
 	const cubeStore = useCubeStore();
 	const [searchParams, setSearchParams] = useSearchParams();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		const fetch = async () => {
@@ -22,9 +24,15 @@ function PrivateRoute() {
 				setSearchParams();
 				await authStore.verify();
 				await cubeStore.getCubeCount();
+			} catch (e) {
+				const error = e as Error | AxiosError;
+				if (isAxiosError(error)) {
+					if (error.response?.status === 422) {
+						navigate('createusername');
+					}
+				}
+			} finally {
 				authStore.setLoading(false);
-			} catch (error) {
-				console.log(error);
 			}
 		};
 		fetch();

@@ -9,6 +9,7 @@ import {
 	Req,
 	Res,
 	Redirect,
+	Put,
 } from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { AuthService } from './auth.service';
@@ -43,6 +44,18 @@ export class AuthController {
 	@Post('verify')
 	async verify(@Req() req) {
 		return this.authService.verify(req);
+	}
+
+	@UseGuards(AuthGuardJWT)
+	@Post('verifyGoogle')
+	async verifyGoogle(@Req() req) {
+		return this.authService.verifyGoogle(req);
+	}
+
+	@UseGuards(AuthGuardJWT)
+	@Post('createUsername')
+	async createUsername(@Req() req, @Body() usernameData: { username: string }) {
+		return this.authService.createUsername(req, usernameData);
 	}
 
 	@Get('send-mail')

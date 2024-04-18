@@ -11,7 +11,6 @@ model User {
   id       String             @id
   userAuth UserAuthentication @relation(fields: [id], references: [id])
   email    String             @unique
-  username String             @unique
   fullName String
   password String
 }
@@ -29,9 +28,9 @@ model UserAuthentication {
   id         String      @id @default(uuid())
   simpleUser User?
   googleUser GoogleUser?
-
-  cubes Cube[]
-  likes Like[]
+  username   String?     @unique
+  cubes      Cube[]
+  likes      Like[]
 }
 
 model Cube {

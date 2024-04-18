@@ -1,4 +1,12 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+	BadRequestException,
+	ConflictException,
+	HttpException,
+	HttpStatus,
+	Injectable,
+	UnauthorizedException,
+	UnprocessableEntityException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { GoogleUser, User } from './types/user.types';
@@ -7,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenStrategy } from './refreshToken.strategy';
 import { Headers } from '@nestjs/common';
 import { Request } from 'express';
+import { UserAuthentication } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -21,9 +30,11 @@ export class AuthService {
 		const hashedPassword = await this.passService.hash(createUserDto.password);
 		const user = await this.prismaService.userAuthentication.create({
 			data: {
+				username: createUserDto.username,
 				simpleUser: {
 					create: {
-						...createUserDto,
+						email: createUserDto.email,
+						fullName: createUserDto.fullName,
 						password: hashedPassword,
 					},
 				},
@@ -34,7 +45,7 @@ export class AuthService {
 		const reqUser: User = {
 			id: user.id,
 			email: user.simpleUser.email,
-			username: user.simpleUser.username,
+			username: user.username,
 			fullName: user.simpleUser.fullName,
 		};
 
@@ -42,20 +53,29 @@ export class AuthService {
 	}
 
 	async login(loginUserDto: LoginUserDto): Promise<{ accessToken: string; refreshToken: string }> {
-		let user = await this.prismaService.user.findFirst({
+		const userAuth = await this.prismaService.userAuthentication.findFirst({
 			where: {
 				username: loginUserDto.emailOrUsername,
 			},
+			include: { simpleUser: true },
 		});
-		if (!user) {
+
+		let user;
+
+		if (!userAuth) {
 			user = await this.prismaService.user.findFirst({
 				where: {
 					email: loginUserDto.emailOrUsername,
 				},
 			});
 			if (!user) {
-				throw new UnauthorizedException('Unauthorized');
+				throw new BadRequestException();
 			}
+		} else {
+			if (!userAuth.simpleUser) {
+				throw new BadRequestException();
+			}
+			user = userAuth.simpleUser;
 		}
 
 		await this.passService.compare(loginUserDto.password, user.password);
@@ -80,7 +100,13 @@ export class AuthService {
 			include: { simpleUser: true, googleUser: true },
 		});
 
+		if (user === null) {
+			throw new BadRequestException();
+		}
 		if (user.googleUser) {
+			if (user.username === null) {
+				throw new HttpException('Please set username', HttpStatus.UNPROCESSABLE_ENTITY);
+			}
 			const reqUser: GoogleUser = {
 				id: user.id,
 				email: user.googleUser.email,
@@ -91,14 +117,79 @@ export class AuthService {
 			return reqUser;
 		}
 		if (user.simpleUser) {
+			if (user.username === null) {
+				throw new HttpException('Please set username', HttpStatus.UNPROCESSABLE_ENTITY);
+			}
 			const reqUser: User = {
 				id: user.id,
 				email: user.simpleUser.email,
-				username: user.simpleUser.username,
+				username: user.username,
 				fullName: user.simpleUser.fullName,
 			};
 			return reqUser;
 		}
+	}
+
+	async verifyGoogle(req: Request) {
+		const user = await this.prismaService.userAuthentication.findFirst({
+			where: {
+				id: req['payload'].id,
+			},
+			include: { googleUser: true, simpleUser: true },
+		});
+		if (user === null) {
+			throw new BadRequestException();
+		}
+
+		if (user.username !== null) {
+			throw new BadRequestException();
+		}
+		if (user.googleUser) {
+			const reqUser: { fullName: string; avatar: string } = {
+				fullName: user.googleUser.fullName,
+				avatar: user.googleUser.avatar,
+			};
+			return reqUser;
+		}
+		if (user.simpleUser) {
+			const reqUser: { fullName: string } = {
+				fullName: user.simpleUser.fullName,
+			};
+			return reqUser;
+		}
+	}
+
+	async createUsername(req: Request, usernameData: { username: string }) {
+		const user = await this.prismaService.userAuthentication.findFirst({
+			where: {
+				id: req['payload'].id,
+			},
+		});
+		if (user === null) {
+			throw new BadRequestException();
+		}
+
+		if (user.username !== null) {
+			throw new BadRequestException();
+		}
+		const existingUser = await this.prismaService.userAuthentication.findFirst({
+			where: {
+				username: usernameData.username,
+			},
+		});
+
+		if (existingUser !== null) {
+			throw new UnprocessableEntityException('username already exists');
+		}
+
+		const userWithUsername = await this.prismaService.userAuthentication.update({
+			where: { id: user.id },
+			data: {
+				username: usernameData.username,
+			},
+		});
+
+		return userWithUsername;
 	}
 
 	async refresh(refreshToken: string): Promise<{ accessToken: string }> {
@@ -141,7 +232,6 @@ export class AuthService {
 		const accessToken = await this.jwtService.signAsync({
 			id: userInDb.id,
 		});
-		console.log(accessToken);
 		const refreshToken = await this.refreshTokenStrategy.generateRefreshToken({
 			id: userInDb.id,
 		});

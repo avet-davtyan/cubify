@@ -15,11 +15,13 @@ export class ExistsValidation implements ValidatorConstraintInterface {
 	constructor(private prismaService: PrismaService) {}
 
 	async validate(value: string): Promise<boolean> {
-		let user = await this.prismaService.user.findFirst({
+		const userAuth = await this.prismaService.userAuthentication.findFirst({
 			where: {
 				username: value,
 			},
+			include: { simpleUser: true },
 		});
+		let user = userAuth.simpleUser;
 		if (!user) {
 			user = await this.prismaService.user.findFirst({
 				where: {

@@ -11,19 +11,11 @@ export interface LoginData {
 	password: string;
 }
 
-export interface User {
+export interface GeneralUser {
 	id: string;
-	username: string;
-	email: string;
-	fullName: string;
-	avatar?: string;
-}
-
-export interface GoogleUser {
-	id: string;
-	fullName: string;
-	email: string;
-	googleId: string;
-	avatar?: string;
 	username?: string;
+	email: string;
+	fullName: string;
+	avatar?: string;
+	googleId?: string;
 }

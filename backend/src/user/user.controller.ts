@@ -16,17 +16,14 @@ import { GoogleUser, User } from 'src/auth/types/user.types';
 
 @Controller('user')
 export class UserController {
-	constructor(
-		private userService: UserService,
-		private prismaService: PrismaService,
-	) {}
+	constructor(private userService: UserService) {}
 	@Get(':id')
 	async findOne(@Param() params: { id: string }): Promise<User | GoogleUser> {
 		return await this.userService.findOne(params.id);
 	}
 
 	@Get('find/:username')
-	async findOneByUsername(@Param() params: { username: string }): Promise<User> {
+	async findOneByUsername(@Param() params: { username: string }): Promise<User | GoogleUser> {
 		return await this.userService.findOneByUsername(params.username);
 	}
 }

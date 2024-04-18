@@ -98,7 +98,10 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 							{getDate(cube.createdAt)}
 						</p>
 					</div>
-					<Skeleton isLoaded={cubeLoaded}>
+					<Skeleton
+						isLoaded={cubeLoaded}
+						className="rounded-lg"
+					>
 						<div
 							style={{
 								width: '100%',

@@ -5,7 +5,7 @@ import useDarkModeStore from '../../../store/DarkLightModeStore';
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
-	const { user } = useAuthStore();
+	const { user, isAuth } = useAuthStore();
 	const navigate = useNavigate();
 	const darkModeStore = useDarkModeStore();
 	const pathName = location.pathname;
@@ -62,15 +62,18 @@ const NavBar = () => {
 				>
 					Cubes
 				</p>
-				<a
-					href="/create_cube"
+				<p
 					style={{
+						cursor: 'pointer',
 						opacity: pathName == '/create_cube' ? '0.5' : '1',
 						borderBottom: pathName == '/create_cube' ? '1px solid' : '',
 					}}
+					onClick={() => {
+						navigate('/create_cube');
+					}}
 				>
-					Create a Cube
-				</a>
+					Create a cube
+				</p>
 			</div>
 			<div
 				style={{
@@ -94,7 +97,7 @@ const NavBar = () => {
 					>
 						{user?.fullName}
 					</p>
-					<Avatar src={user?.avatar} />
+					{isAuth && <Avatar src={user?.avatar} />}
 				</div>
 			</div>
 		</Navbar>

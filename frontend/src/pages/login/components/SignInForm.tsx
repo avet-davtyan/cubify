@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { LoginData } from '../../../types/AuthTypes';
 import { Button, Card, Image, Input, Link } from '@nextui-org/react';
-import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
+import {
+	EyeFilled,
+	EyeInvisibleFilled,
+	GoogleCircleFilled,
+	GoogleOutlined,
+	GoogleSquareFilled,
+} from '@ant-design/icons';
 import cubifyAv from '../../../assets/rub.webp';
 import { Formik } from 'formik';
 import useAuthStore from '../../../store/AuthStore';
@@ -111,7 +117,6 @@ const SignInForm: React.FC = () => {
 								}
 								type={isVisible ? 'text' : 'password'}
 							/>
-
 							<div className="w-full flex justify-center items-center flex-col">
 								<p className="opacity-50 text-sm">Don't have an account?</p>
 								<Link
@@ -121,6 +126,7 @@ const SignInForm: React.FC = () => {
 									<p className="text-sm">Sign Up</p>
 								</Link>
 							</div>
+
 							<Button
 								className="rounded"
 								type="submit"
@@ -130,6 +136,16 @@ const SignInForm: React.FC = () => {
 								size="lg"
 							>
 								Sign In
+							</Button>
+
+							<Button
+								className="rounded"
+								size="lg"
+								as={Link}
+								href="http://localhost:5029/auth/google"
+							>
+								Sign in with
+								<GoogleOutlined />
 							</Button>
 						</div>
 					</form>
