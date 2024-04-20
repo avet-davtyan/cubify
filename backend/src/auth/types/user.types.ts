@@ -32,6 +32,7 @@ export interface UserAuth {
 	id: string;
 	simpleUser?: SimpleUser;
 	googleUser?: GoogleUser;
+	username?: string;
 	verificationToken: string;
 	verified: boolean;
 }

@@ -86,14 +86,9 @@ export class CubeService {
 			},
 		});
 		if (cube === null) {
-			throw new NotFoundException();
+			throw new NotFoundException('Cube is not found');
 		}
 		return cube;
-	}
-
-	async findMany(queries: { show: string }): Promise<Cube[]> {
-		const cubes = await this.prismaService.cube.findMany({});
-		return cubes;
 	}
 
 	async getCubesWithMostLikes(page: number = 1, pageSize: number = 9): Promise<Cube[]> {

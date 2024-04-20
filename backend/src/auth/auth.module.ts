@@ -8,6 +8,7 @@ import { jwtConstants } from './constants/constants';
 import { RefreshTokenStrategy } from './refreshToken.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { MailService } from 'src/mail/mail.service';
+import { ValidationService } from './services/validation.service';
 
 @Global()
 @Module({
@@ -26,6 +27,7 @@ import { MailService } from 'src/mail/mail.service';
 		RefreshTokenStrategy,
 		GoogleStrategy,
 		MailService,
+		ValidationService,
 	],
 })
 export class AuthModule {}

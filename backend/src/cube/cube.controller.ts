@@ -53,11 +53,6 @@ export class CubeController {
 		return await this.cubeService.findOne(+params.id);
 	}
 
-	@Get()
-	async fincMany(@Query() queries: { show: string }): Promise<Cube[]> {
-		return await this.cubeService.findMany(queries);
-	}
-
 	@UseGuards(AuthGuardJWT)
 	@Post('like')
 	async like(@Req() req, @Body() body: { cubeId: number }) {

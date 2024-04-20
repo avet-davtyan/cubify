@@ -10,6 +10,8 @@ import {
 	Res,
 	Redirect,
 	Put,
+	HttpCode,
+	HttpStatus,
 } from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { AuthService } from './auth.service';
@@ -28,8 +30,9 @@ export class AuthController {
 	) {}
 
 	@Post('register')
+	@HttpCode(HttpStatus.CREATED)
 	@UsePipes(ValidationPipe)
-	async regitser(@Body() createUserDto: CreateUserDto): Promise<User> {
+	async regitser(@Body() createUserDto: CreateUserDto): Promise<string> {
 		return await this.authService.register(createUserDto);
 	}
 
@@ -60,6 +63,7 @@ export class AuthController {
 	}
 
 	@UseGuards(AuthGuardJWT)
+	@HttpCode(HttpStatus.CREATED)
 	@Post('createUsername')
 	async createUsername(@Req() req, @Body() usernameData: { username: string }) {
 		return this.authService.createUsername(req, usernameData);
@@ -74,7 +78,7 @@ export class AuthController {
 
 	@Get('/google')
 	@UseGuards(AuthGuard('google'))
-	async googleAuth(@Req() req) {}
+	async googleAuth() {}
 
 	@Get('/google/callback')
 	@UseGuards(AuthGuard('google'))
