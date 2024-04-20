@@ -27,7 +27,9 @@ function PrivateRoute() {
 			} catch (e) {
 				const error = e as Error | AxiosError;
 				if (isAxiosError(error)) {
-					if (error.response?.status === 422) {
+					if (error.response?.status === 403) {
+						navigate('verify');
+					} else if (error.response?.status === 422) {
 						navigate('createusername');
 					}
 				}

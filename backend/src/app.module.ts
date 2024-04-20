@@ -12,22 +12,11 @@ import { UserModule } from './user/user.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { RewriteApiEndpointMiddleware } from './auth/middlewares/redirect.middleware';
 import { ConfigModule } from '@nestjs/config';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { MailModule } from './mail/mail.module';
 
 @Module({
 	imports: [
-		MailerModule.forRoot({
-			transport: {
-				service: 'gmail',
-				host: 'smpt.gmail.com',
-				port: 587,
-				secure: false,
-				// use SSL
-				auth: {
-					user: 'avetdavtyan04@gmail.com',
-					pass: 'Tiezerakan007',
-				},
-			},
-		}),
 		AuthModule,
 		PrismaModule,
 		CubeModule,
@@ -36,6 +25,7 @@ import { ConfigModule } from '@nestjs/config';
 			serveRoot: '/cube_images',
 		}),
 		UserModule,
+		MailModule,
 	],
 	controllers: [AppController],
 	providers: [UserService],

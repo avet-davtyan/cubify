@@ -96,6 +96,7 @@ const UserPage: React.FC = () => {
 							<Avatar
 								radius="full"
 								size="md"
+								isBordered
 								src={user?.avatar}
 							/>
 							<div className="flex flex-col gap-1 items-start justify-center">

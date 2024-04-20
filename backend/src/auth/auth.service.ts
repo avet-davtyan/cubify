@@ -1,6 +1,7 @@
 import {
 	BadRequestException,
 	ConflictException,
+	ForbiddenException,
 	HttpException,
 	HttpStatus,
 	Injectable,
@@ -16,6 +17,7 @@ import { RefreshTokenStrategy } from './refreshToken.strategy';
 import { Headers } from '@nestjs/common';
 import { Request } from 'express';
 import { UserAuthentication } from '@prisma/client';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +26,7 @@ export class AuthService {
 		private passService: PassService,
 		private jwtService: JwtService,
 		private refreshTokenStrategy: RefreshTokenStrategy,
+		private mailService: MailService,
 	) {}
 
 	async register(createUserDto: CreateUserDto): Promise<User> {
@@ -41,6 +44,8 @@ export class AuthService {
 			},
 			include: { simpleUser: true },
 		});
+
+		await this.mailService.sendMail(user);
 
 		const reqUser: User = {
 			id: user.id,
@@ -101,7 +106,10 @@ export class AuthService {
 		});
 
 		if (user === null) {
-			throw new BadRequestException();
+			throw new BadRequestException('User is not found');
+		}
+		if (!user.verified) {
+			throw new ForbiddenException('Please verify your email');
 		}
 		if (user.googleUser) {
 			if (user.username === null) {
@@ -148,6 +156,34 @@ export class AuthService {
 			const reqUser: { fullName: string; avatar: string } = {
 				fullName: user.googleUser.fullName,
 				avatar: user.googleUser.avatar,
+			};
+			return reqUser;
+		}
+		if (user.simpleUser) {
+			const reqUser: { fullName: string } = {
+				fullName: user.simpleUser.fullName,
+			};
+			return reqUser;
+		}
+	}
+
+	async verifyNotVerified(req: Request) {
+		const user = await this.prismaService.userAuthentication.findFirst({
+			where: {
+				id: req['payload'].id,
+			},
+			include: { googleUser: true, simpleUser: true },
+		});
+		if (user === null) {
+			throw new BadRequestException();
+		}
+
+		if (user.verified) {
+			throw new BadRequestException();
+		}
+		if (user.googleUser) {
+			const reqUser: { fullName: string } = {
+				fullName: user.googleUser.fullName,
 			};
 			return reqUser;
 		}
@@ -216,6 +252,7 @@ export class AuthService {
 		if (userInDb === null) {
 			const _user = await this.prismaService.userAuthentication.create({
 				data: {
+					verified: true,
 					googleUser: {
 						create: {
 							googleId: user.googleId,

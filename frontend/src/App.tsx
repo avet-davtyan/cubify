@@ -10,6 +10,7 @@ import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import useDarkModeStore from './store/DarkLightModeStore';
 import UserPage from './pages/user/user';
 import CreateUsername from './pages/createUsername/createUsername';
+import Verify from './pages/verify/verify';
 
 function App() {
 	const { darkMode } = useDarkModeStore();
@@ -55,6 +56,10 @@ function App() {
 							<Route
 								path="/createusername"
 								element={<CreateUsername />}
+							/>
+							<Route
+								path="/verify"
+								element={<Verify />}
 							/>
 						</Routes>
 					</BrowserRouter>

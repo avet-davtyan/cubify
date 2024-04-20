@@ -16,8 +16,53 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
 
 	async validate(value: string, args: ValidationArguments): Promise<boolean> {
 		const { type }: { type: 'username' | 'email' } = args.constraints[0];
-		const searchPayLoad = type === 'username' ? { username: value } : { email: value };
-		const user = await this.prismaService.user.findFirst({ where: searchPayLoad });
+		let user;
+		if (type === 'username') {
+			console.log(value);
+			user = await this.prismaService.userAuthentication.findFirst({
+				where: {
+					username: value,
+				},
+			});
+
+			if (user && !user.verified) {
+				await this.prismaService.user.delete({
+					where: {
+						id: user.id,
+					},
+				});
+				await this.prismaService.userAuthentication.delete({
+					where: {
+						id: user.id,
+					},
+				});
+				user = null;
+			}
+		} else if (type === 'email') {
+			user = await this.prismaService.user.findFirst({
+				where: {
+					email: value,
+				},
+				include: {
+					userAuth: true,
+				},
+			});
+
+			if (user && !user.userAuth.verified) {
+				await this.prismaService.user.delete({
+					where: {
+						id: user.id,
+					},
+				});
+				await this.prismaService.userAuthentication.delete({
+					where: {
+						id: user.id,
+					},
+				});
+				user = null;
+			}
+		}
+
 		if (user) {
 			throw new UnprocessableEntityException(`${type} already exists`);
 		} else {

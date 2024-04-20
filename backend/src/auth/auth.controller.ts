@@ -18,12 +18,13 @@ import { AuthGuardJWT } from './guards/auth.guard';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AuthGuard } from '@nestjs/passport';
 import * as express from 'express';
+import { MailService } from 'src/mail/mail.service';
 
 @Controller('auth')
 export class AuthController {
 	constructor(
 		private authService: AuthService,
-		private mailerService: MailerService,
+		private mailService: MailService,
 	) {}
 
 	@Post('register')
@@ -53,23 +54,15 @@ export class AuthController {
 	}
 
 	@UseGuards(AuthGuardJWT)
+	@Post('verifyNotVerified')
+	async verifyNotVerified(@Req() req) {
+		return this.authService.verifyNotVerified(req);
+	}
+
+	@UseGuards(AuthGuardJWT)
 	@Post('createUsername')
 	async createUsername(@Req() req, @Body() usernameData: { username: string }) {
 		return this.authService.createUsername(req, usernameData);
-	}
-
-	@Get('send-mail')
-	async sendMail() {
-		console.log('start sending');
-		await this.mailerService.sendMail({
-			to: 'avetdavtyan04@gmail.com',
-			subject: 'Verify Your Email Address',
-			template: 'verification',
-			context: {
-				verificationLink: 'aaaa',
-			},
-		});
-		return 'ok	';
 	}
 
 	@Post('refresh')

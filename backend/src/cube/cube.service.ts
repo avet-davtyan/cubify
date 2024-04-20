@@ -4,7 +4,6 @@ import { Cube } from './types/cube.types';
 import { Request } from 'express';
 import { join, extname } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User, userAuthentication } from 'src/auth/types/user.types';
 import * as fs from 'fs';
 
 @Injectable()

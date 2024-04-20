@@ -5,6 +5,12 @@ export interface User {
 	fullName: string;
 }
 
+export interface SimpleUser {
+	id: string;
+	email: string;
+	fullName: string;
+}
+
 export interface GoogleUser {
 	id: string;
 	fullName: string;
@@ -22,6 +28,10 @@ export interface RegisteredUser {
 	fullName: string;
 }
 
-export interface userAuthentication {
+export interface UserAuth {
 	id: string;
+	simpleUser?: SimpleUser;
+	googleUser?: GoogleUser;
+	verificationToken: string;
+	verified: boolean;
 }

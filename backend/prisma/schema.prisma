@@ -25,12 +25,14 @@ model GoogleUser {
 }
 
 model UserAuthentication {
-  id         String      @id @default(uuid())
-  simpleUser User?
-  googleUser GoogleUser?
-  username   String?     @unique
-  cubes      Cube[]
-  likes      Like[]
+  id                String      @id @default(uuid())
+  simpleUser        User?
+  googleUser        GoogleUser?
+  username          String?     @unique
+  verified          Boolean     @default(false)
+  verificationToken String      @unique @default(uuid())
+  cubes             Cube[]
+  likes             Like[]
 }
 
 model Cube {
