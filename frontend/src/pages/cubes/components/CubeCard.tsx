@@ -130,7 +130,12 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 					</div>
 				</CardHeader>
 				<CardBody className="px-10 py-0 ">
-					<div className="flex justify-between my-3">
+					<div
+						className="flex justify-between my-3 cursor-pointer"
+						onClick={() => {
+							navigate(`/cube/${cube.id}`);
+						}}
+					>
 						<p className="opacity-100 text-small">{cube.name}</p>
 						<p className=" font-thin font-sans text-small">{getDate(cube.createdAt)}</p>
 					</div>

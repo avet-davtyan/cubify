@@ -34,7 +34,7 @@ export class ValidationService {
 				},
 			});
 			if (user === null) {
-				throw new NotFoundException('User is not Found');
+				throw new NotFoundException('Wrong username or email');
 			}
 		} else {
 			if (!userAuth.simpleUser) {
@@ -124,7 +124,7 @@ export class ValidationService {
 		});
 
 		if (existingUser !== null) {
-			throw new UnprocessableEntityException('username already exists');
+			throw new UnprocessableEntityException('Username already exists');
 		}
 		return user;
 	}

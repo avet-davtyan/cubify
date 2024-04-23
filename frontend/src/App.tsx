@@ -11,6 +11,9 @@ import useDarkModeStore from './store/DarkLightModeStore';
 import UserPage from './pages/user/user';
 import CreateUsername from './pages/createUsername/createUsername';
 import Verify from './pages/verify/verify';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import CubePage from './pages/cube/cube';
 
 function App() {
 	const { darkMode } = useDarkModeStore();
@@ -20,50 +23,54 @@ function App() {
 				attribute="class"
 				defaultTheme={darkMode ? 'dark' : 'light'}
 			>
-				<>
-					<BrowserRouter>
-						<Routes>
+				<BrowserRouter>
+					<Routes>
+						<Route
+							path="/"
+							element={<PrivateRoute />}
+						>
 							<Route
-								path="/"
-								element={<PrivateRoute />}
-							>
-								<Route
-									index
-									element={<Dashboard />}
-								/>
-								<Route
-									path="/cubes"
-									element={<Cubes />}
-								/>
-								<Route
-									path="/create_cube"
-									element={<CreateCube />}
-								/>
-								<Route
-									path="/:username"
-									element={<UserPage />}
-								/>
-							</Route>
+								index
+								element={<Dashboard />}
+							/>
+							<Route
+								path="/cubes"
+								element={<Cubes />}
+							/>
+							<Route
+								path="/cube/:cubeId"
+								element={<CubePage />}
+							/>
+							<Route
+								path="/create_cube"
+								element={<CreateCube />}
+							/>
+							<Route
+								path="/:username"
+								element={<UserPage />}
+							/>
+						</Route>
 
-							<Route
-								path="/login"
-								element={<Login />}
-							/>
-							<Route
-								path="/register"
-								element={<Register />}
-							/>
-							<Route
-								path="/createusername"
-								element={<CreateUsername />}
-							/>
-							<Route
-								path="/verify"
-								element={<Verify />}
-							/>
-						</Routes>
-					</BrowserRouter>
-				</>
+						<Route
+							path="/login"
+							element={<Login />}
+						/>
+						<Route
+							path="/register"
+							element={<Register />}
+						/>
+						<Route
+							path="/createusername"
+							element={<CreateUsername />}
+						/>
+						<Route
+							path="/verify"
+							element={<Verify />}
+						/>
+					</Routes>
+				</BrowserRouter>
+
+				<ToastContainer />
 			</NextThemesProvider>
 		</NextUIProvider>
 	);

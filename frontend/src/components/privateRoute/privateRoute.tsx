@@ -22,8 +22,8 @@ function PrivateRoute() {
 					localStorage.setItem('rt', refreshToken);
 				}
 				setSearchParams();
-				await authStore.verify();
 				await cubeStore.getCubeCount();
+				await authStore.verify();
 			} catch (e) {
 				const error = e as Error | AxiosError;
 				if (isAxiosError(error)) {

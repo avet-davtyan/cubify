@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react';
-import useAuthStore from '../../store/AuthStore';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card, Input, Image, Avatar, Divider } from '@nextui-org/react';
+import { Button, Card, Input, Avatar, Divider } from '@nextui-org/react';
 import { Formik } from 'formik';
 import api from '../../http/base_api';
 import SquareLoader from 'react-spinners/SquareLoader';
+import { AxiosError, isAxiosError } from 'axios';
+import { Flip, toast } from 'react-toastify';
 
 const CreateUsername = () => {
-	const authStore = useAuthStore();
-	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const navigate = useNavigate();
 	const [userInfo, setUserInfo] = useState<{ fullName: string; avatar: string } | null>(null);
 
@@ -41,9 +40,21 @@ const CreateUsername = () => {
 			await createUsername(values.username);
 			navigate('/');
 			resetForm();
-		} catch (error: any) {
-			// setErrorMessage(error.request.response.data.message);
-			console.log(error);
+		} catch (e) {
+			const error = e as Error | AxiosError;
+			if (isAxiosError(error)) {
+				toast.error(error.response?.data.message, {
+					position: 'top-center',
+					autoClose: 1000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: 'dark',
+					transition: Flip,
+				});
+			}
 		} finally {
 			setSignInLoading(false);
 		}
@@ -54,11 +65,7 @@ const CreateUsername = () => {
 	};
 
 	const createUsername = async (username: string) => {
-		try {
-			await api.post('auth/createUsername', { username });
-		} catch (error) {
-			console.log(error);
-		}
+		await api.post('auth/createUsername', { username });
 	};
 
 	const fetch = async () => {

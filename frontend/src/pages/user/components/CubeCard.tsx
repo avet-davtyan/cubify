@@ -6,6 +6,7 @@ import api from '../../../http/base_api';
 import CubeCanvas from './components/CubeCanvas';
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import useAuthStore from '../../../store/AuthStore';
+import { useNavigate } from 'react-router-dom';
 
 const CubeCard = ({ cube }: { cube: Cube }) => {
 	const [liked, setLiked] = useState<boolean | null>(null);
@@ -44,6 +45,8 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 		return `${day} / ${month} / ${year}`;
 	};
 
+	const navigate = useNavigate();
+
 	useEffect(() => {
 		api
 			.post('/cube/isLiked', { cubeId: cube.id })
@@ -69,7 +72,6 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 						display: 'flex',
 						flexDirection: 'column',
 						transition: 'all 0.3s',
-						// border: '1px solid rgba(255,255,255,0.2)',
 						gap: '10px',
 					}}
 					onMouseEnter={() => {
@@ -79,7 +81,12 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 						setHover(false);
 					}}
 				>
-					<div>
+					<div
+						onClick={() => {
+							navigate(`/cube/${cube.id}`);
+						}}
+						className="cursor-pointer"
+					>
 						<p
 							style={{
 								transition: '0.1s all',

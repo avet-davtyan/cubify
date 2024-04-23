@@ -18,7 +18,7 @@ export class PassService {
 	async compare(password, hashedPassword): Promise<boolean> {
 		const match = await bcrypt.compare(password, hashedPassword);
 		if (!match) {
-			throw new HttpException('wrong password', HttpStatus.BAD_REQUEST);
+			throw new HttpException('Wrong password', HttpStatus.BAD_REQUEST);
 		}
 		return match;
 	}

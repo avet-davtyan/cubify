@@ -48,8 +48,9 @@ export class CubeController {
 		return await this.cubeService.createCube(createCubeFilesDto, createCubeBodyDto, requset);
 	}
 
-	@Get('specific/:id')
+	@Get('/specific/:id')
 	async findOne(@Param() params: { id: string }): Promise<Cube> {
+		console.log(params);
 		return await this.cubeService.findOne(+params.id);
 	}
 

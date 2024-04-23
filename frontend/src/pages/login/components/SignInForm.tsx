@@ -12,6 +12,8 @@ import cubifyAv from '../../../assets/rub.webp';
 import { Formik } from 'formik';
 import useAuthStore from '../../../store/AuthStore';
 import { useNavigate } from 'react-router-dom';
+import { toast, Flip } from 'react-toastify';
+import { AxiosError, isAxiosError } from 'axios';
 
 const SignInForm: React.FC = () => {
 	const authStore = useAuthStore();
@@ -40,12 +42,25 @@ const SignInForm: React.FC = () => {
 		console.log('s');
 		try {
 			setSignInLoading(true);
+
 			await authStore.login(values.emailOrUsername, values.password);
 			navigate('/');
 			resetForm();
-		} catch (error: any) {
-			// setErrorMessage(error.request.response.data.message);
-			console.log(error);
+		} catch (e) {
+			const error = e as Error | AxiosError;
+			if (isAxiosError(error)) {
+				toast.error(error.response?.data.message, {
+					position: 'top-center',
+					autoClose: 1000,
+					hideProgressBar: true,
+					closeOnClick: true,
+					pauseOnHover: true,
+					draggable: true,
+					progress: undefined,
+					theme: 'dark',
+					transition: Flip,
+				});
+			}
 		} finally {
 			setSignInLoading(false);
 		}
