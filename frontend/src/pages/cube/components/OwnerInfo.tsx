@@ -1,4 +1,4 @@
-import { Avatar, Card, CardBody, CardHeader, Skeleton } from '@nextui-org/react';
+import { Avatar } from '@nextui-org/react';
 import { GeneralUser } from '../../../types/AuthTypes';
 
 const OwnerInfo = ({ owner, navigate }: { owner: GeneralUser | null; navigate: () => void }) => {

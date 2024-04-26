@@ -1,6 +1,6 @@
 import { Environment, OrbitControls, useTexture } from '@react-three/drei';
 import { Texture } from 'three';
-import texture from '../../../assets/cubecube.png';
+import texture from '../../../assets/white.webp';
 import InputMaterialButton from './InputMaterialButton';
 import useCreateCubeStore from '../../../store/CreateCubeStore';
 

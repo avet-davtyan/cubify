@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { User } from '../../types/UserTypes';
 import api from '../../http/base_api';
 import { Cube } from '../../types/CubeTypes';
 import CubeCard from './components/CubeCard';
-import { Avatar, Button, Card, CardHeader, Image, Pagination, Skeleton } from '@nextui-org/react';
+import { Avatar, Pagination, Skeleton } from '@nextui-org/react';
 import { GeneralUser } from '../../types/AuthTypes';
 import useAuthStore from '../../store/AuthStore';
 
@@ -135,7 +134,7 @@ const UserPage: React.FC = () => {
 								}}
 								className="my-5"
 							>
-								<Skeleton isLoaded={cubeCount !== null}>
+								{cubeCount && (
 									<Pagination
 										showControls
 										isCompact
@@ -144,7 +143,7 @@ const UserPage: React.FC = () => {
 
 										onChange={handlePageChange}
 									/>
-								</Skeleton>
+								)}
 							</div>
 						</div>
 					) : (

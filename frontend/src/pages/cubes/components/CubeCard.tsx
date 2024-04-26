@@ -1,13 +1,4 @@
-import {
-	Avatar,
-	Button,
-	Card,
-	CardBody,
-	CardFooter,
-	CardHeader,
-	Divider,
-	Skeleton,
-} from '@nextui-org/react';
+import { Avatar, Card, CardBody, CardFooter, CardHeader, Skeleton } from '@nextui-org/react';
 import { Cube } from '../../../types/CubeTypes';
 import { useEffect, useState } from 'react';
 import api from '../../../http/base_api';

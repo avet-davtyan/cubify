@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import { LoginData } from '../../../types/AuthTypes';
 import { Button, Card, Image, Input, Link } from '@nextui-org/react';
-import {
-	EyeFilled,
-	EyeInvisibleFilled,
-	GoogleCircleFilled,
-	GoogleOutlined,
-	GoogleSquareFilled,
-} from '@ant-design/icons';
+import { EyeFilled, EyeInvisibleFilled, GoogleOutlined } from '@ant-design/icons';
 import cubifyAv from '../../../assets/rub.webp';
 import { Formik } from 'formik';
 import useAuthStore from '../../../store/AuthStore';

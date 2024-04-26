@@ -14,6 +14,7 @@ import Verify from './pages/verify/verify';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CubePage from './pages/cube/cube';
+import Search from './pages/search/search';
 
 function App() {
 	const { darkMode } = useDarkModeStore();
@@ -40,6 +41,10 @@ function App() {
 							<Route
 								path="/cube/:cubeId"
 								element={<CubePage />}
+							/>
+							<Route
+								path="/search"
+								element={<Search />}
 							/>
 							<Route
 								path="/create_cube"

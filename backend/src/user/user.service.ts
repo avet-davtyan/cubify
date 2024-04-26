@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { GoogleUser, User } from 'src/auth/types/user.types';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -69,5 +69,176 @@ export class UserService {
 			};
 			return user;
 		}
+	}
+
+	async searchUsers(
+		searchTerm: string,
+		page: number,
+		pageSize: number,
+	): Promise<Array<User | GoogleUser>> {
+		const specialChars = [' ', '.', '_'];
+		let searchParts = [searchTerm];
+
+		specialChars.forEach((char) => {
+			const newParts: string[] = [];
+			searchParts.forEach((part) => {
+				newParts.push(...part.split(char).filter(Boolean));
+			});
+			searchParts = newParts;
+		});
+
+		const conditions = searchParts.map((searchPart) => ({
+			OR: [
+				{
+					username: {
+						contains: searchPart,
+					},
+				},
+				{
+					simpleUser: {
+						fullName: {
+							contains: searchPart,
+						},
+					},
+				},
+				{
+					googleUser: {
+						fullName: {
+							contains: searchPart,
+						},
+					},
+				},
+			],
+		}));
+		if (conditions.length === 0) {
+			throw new BadRequestException('Plaese provide more search information');
+		}
+		let users = await this.prismaService.userAuthentication.findMany({
+			take: pageSize,
+			skip: (page - 1) * pageSize,
+			where: {
+				AND: searchParts.map((searchPart) => ({
+					OR: [
+						{
+							username: {
+								contains: searchPart,
+							},
+						},
+						{
+							simpleUser: {
+								fullName: {
+									contains: searchPart,
+								},
+							},
+						},
+						{
+							googleUser: {
+								fullName: {
+									contains: searchPart,
+								},
+							},
+						},
+					],
+				})),
+			},
+			include: {
+				simpleUser: true,
+				googleUser: true,
+			},
+		});
+
+		const _users = users.map((user) => {
+			if (user.simpleUser) {
+				const _user: User = {
+					id: user.id,
+					username: user.username,
+					fullName: user.simpleUser.fullName,
+					email: user.simpleUser.email,
+				};
+				return _user;
+			}
+			if (user.googleUser) {
+				const _user: GoogleUser = {
+					id: user.id,
+					googleId: user.googleUser.googleId,
+					fullName: user.googleUser.fullName,
+					email: user.googleUser.email,
+					avatar: user.googleUser.avatar,
+					username: user.username,
+				};
+				return _user;
+			}
+		});
+
+		return _users;
+	}
+
+	async searchUsersCount(searchTerm: string): Promise<number> {
+		const specialChars = [' ', '.', '_'];
+		let searchParts = [searchTerm];
+
+		specialChars.forEach((char) => {
+			const newParts: string[] = [];
+			searchParts.forEach((part) => {
+				newParts.push(...part.split(char).filter(Boolean));
+			});
+			searchParts = newParts;
+		});
+
+		const conditions = searchParts.map((searchPart) => ({
+			OR: [
+				{
+					username: {
+						contains: searchPart,
+					},
+				},
+				{
+					simpleUser: {
+						fullName: {
+							contains: searchPart,
+						},
+					},
+				},
+				{
+					googleUser: {
+						fullName: {
+							contains: searchPart,
+						},
+					},
+				},
+			],
+		}));
+		if (conditions.length === 0) {
+			throw new BadRequestException('Plaese provide more search information');
+		}
+		const count = await this.prismaService.userAuthentication.count({
+			where: {
+				AND: searchParts.map((searchPart) => ({
+					OR: [
+						{
+							username: {
+								contains: searchPart,
+							},
+						},
+						{
+							simpleUser: {
+								fullName: {
+									contains: searchPart,
+								},
+							},
+						},
+						{
+							googleUser: {
+								fullName: {
+									contains: searchPart,
+								},
+							},
+						},
+					],
+				})),
+			},
+		});
+
+		return count;
 	}
 }

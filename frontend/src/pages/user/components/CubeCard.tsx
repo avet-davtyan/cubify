@@ -1,7 +1,6 @@
-import { Divider, Skeleton } from '@nextui-org/react';
+import { Skeleton } from '@nextui-org/react';
 import { Cube } from '../../../types/CubeTypes';
 import { useEffect, useState } from 'react';
-import { User } from '../../../types/UserTypes';
 import api from '../../../http/base_api';
 import CubeCanvas from './components/CubeCanvas';
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';

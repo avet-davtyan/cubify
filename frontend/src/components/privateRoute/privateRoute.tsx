@@ -21,7 +21,8 @@ function PrivateRoute() {
 					localStorage.setItem('at', accessToken);
 					localStorage.setItem('rt', refreshToken);
 				}
-				setSearchParams();
+				searchParams.delete('at');
+				searchParams.delete('rt');
 				await cubeStore.getCubeCount();
 				await authStore.verify();
 			} catch (e) {

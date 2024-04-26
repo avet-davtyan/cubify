@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../http/base_api';

@@ -1,13 +1,11 @@
 import { Avatar, Button, Navbar } from '@nextui-org/react';
 import useAuthStore from '../../../store/AuthStore';
 
-import useDarkModeStore from '../../../store/DarkLightModeStore';
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {
 	const { user, isAuth } = useAuthStore();
 	const navigate = useNavigate();
-	const darkModeStore = useDarkModeStore();
 	const pathName = location.pathname;
 	return (
 		<Navbar
@@ -90,14 +88,41 @@ const NavBar = () => {
 						gap: '15px',
 					}}
 				>
-					<p
-						style={{
-							opacity: '0.7',
-						}}
-					>
-						{user?.fullName}
-					</p>
-					{isAuth && <Avatar src={user?.avatar} />}
+					{isAuth ? (
+						<>
+							<p
+								style={{
+									opacity: '0.7',
+								}}
+							>
+								{user?.fullName}
+							</p>
+							<Avatar src={user?.avatar} />
+						</>
+					) : (
+						<div className="flex gap-4">
+							<Button
+								size="sm"
+								color="primary"
+								variant="shadow"
+								onClick={() => {
+									navigate('/login');
+								}}
+							>
+								Sign In
+							</Button>
+							<Button
+								size="sm"
+								color="primary"
+								variant="bordered"
+								onClick={() => {
+									navigate('/register');
+								}}
+							>
+								Sign Up
+							</Button>
+						</div>
+					)}
 				</div>
 			</div>
 		</Navbar>

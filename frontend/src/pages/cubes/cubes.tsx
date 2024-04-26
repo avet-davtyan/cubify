@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import CubeCard from './components/CubeCard';
 import api from '../../http/base_api';
 import { Cube } from '../../types/CubeTypes';
-import { Button, Input, Pagination, Skeleton, Tab, Tabs } from '@nextui-org/react';
-import { SearchOutlined } from '@ant-design/icons';
+import { Pagination, Skeleton, Tab, Tabs } from '@nextui-org/react';
 import { useSearchParams } from 'react-router-dom';
 import useCubeStore from '../../store/CubeStore';
 

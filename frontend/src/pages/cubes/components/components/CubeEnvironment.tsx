@@ -3,7 +3,7 @@ import { Cube } from '../../../../types/CubeTypes';
 import { Mesh, Texture } from 'three';
 import { AxiosResponse } from 'axios';
 import { Dispatch, useEffect, useRef, useState } from 'react';
-import defaultTexture from '../../../../assets/cubifyAv.png';
+import defaultTexture from '../../../../assets/white.webp';
 import api from '../../../../http/base_api';
 import { useFrame } from '@react-three/fiber';
 

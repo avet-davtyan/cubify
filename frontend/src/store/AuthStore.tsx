@@ -1,8 +1,6 @@
 import { create } from 'zustand';
 import AuthService from '../services/AuthService';
 import { GeneralUser } from '../types/AuthTypes';
-import { AxiosError, isAxiosError } from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 interface AuthState {
 	isAuth: boolean;

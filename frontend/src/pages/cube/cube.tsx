@@ -1,14 +1,13 @@
 import { useParams } from 'react-router-dom';
 import api from '../../http/base_api';
 import { useEffect, useState } from 'react';
-import { Button } from '@nextui-org/react';
 import { Cube } from '../../types/CubeTypes';
 import CubeCanvas from './components/CubeCanvas';
 
 const CubePage: React.FC = () => {
 	const { cubeId } = useParams();
 	const [cube, SetCube] = useState<Cube | null>(null);
-	const [cubeLoaded, setCubeLoaded] = useState<boolean>(false);
+	const [, setCubeLoaded] = useState<boolean>(false);
 	const fetch = async () => {
 		try {
 			console.log('here');
