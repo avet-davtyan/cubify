@@ -6,11 +6,12 @@ import * as dotenv from 'dotenv';
 
 async function bootstrap() {
 	dotenv.config();
+	console.log(process.env.FRONTEND_URL);
 	const app = await NestFactory.create(AppModule);
 	useContainer(app.select(AppModule), { fallbackOnErrors: true });
 	app.enableCors({
 		allowedHeaders: '*',
-		origin: 'http://localhost:2950',
+		origin: process.env.FRONTEND_URL,
 		credentials: true,
 	});
 	app.use(

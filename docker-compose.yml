@@ -23,16 +23,15 @@ services:
 
   backend:
     container_name: cubify_backend
-    image: node:20.11.1
-    working_dir: /app/backend
+    build:
+      context: .
+      dockerfile: dockerFiles/Dockerfile.backend
     volumes:
       - ./backend:/app/backend
     ports:
       - "${BACKEND_DEV_PORT}:3000"
-      - "5555:5555"
     env_file:
       - .env
-    command: sh -c "npm run start:dev"
 
   frontend:
     container_name: cubify_frontend

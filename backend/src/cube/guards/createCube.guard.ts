@@ -5,7 +5,6 @@ import { Request } from 'express';
 export class CreateCubeGuard implements CanActivate {
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest<Request>();
-		console.log(request.body);
 		return false;
 	}
 }

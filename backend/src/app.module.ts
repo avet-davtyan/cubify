@@ -21,8 +21,8 @@ import { MailModule } from './mail/mail.module';
 		PrismaModule,
 		CubeModule,
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, '..', 'cube_images'),
-			serveRoot: '/cube_images',
+			rootPath: join(__dirname, '..', process.env.CUBE_IMAGES),
+			serveRoot: `/${process.env.CUBE_IMAGES}`,
 		}),
 		UserModule,
 		MailModule,
