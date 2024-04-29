@@ -1,16 +1,18 @@
 import { Outlet, useNavigate, useSearchParams } from 'react-router-dom';
 import NavBar from './components/NavBar';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import useAuthStore from '../../store/AuthStore';
 import SquareLoader from 'react-spinners/SquareLoader';
 import useCubeStore from '../../store/CubeStore';
 import { AxiosError, isAxiosError } from 'axios';
+import SideBar from './components/SideBar';
 
 function PrivateRoute() {
 	const authStore = useAuthStore();
 	const cubeStore = useCubeStore();
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
+	const [sideBarOpen, setSideBarOpen] = useState<boolean>(false);
 
 	useEffect(() => {
 		const fetch = async () => {
@@ -25,6 +27,7 @@ function PrivateRoute() {
 				searchParams.delete('rt');
 				await cubeStore.getCubeCount();
 				await authStore.verify();
+				navigate('cubes');
 			} catch (e) {
 				const error = e as Error | AxiosError;
 				if (isAxiosError(error)) {
@@ -68,10 +71,13 @@ function PrivateRoute() {
 							overflow: 'auto',
 						}}
 					>
-						<NavBar />
+						<NavBar setSideBarOpen={setSideBarOpen} />
 						<Outlet />
 					</div>
-					{/* <NavBar /> */}
+					<SideBar
+						sideBarOpen={sideBarOpen}
+						setSideBarOpen={setSideBarOpen}
+					/>
 				</>
 			)}
 		</>

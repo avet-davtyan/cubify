@@ -2,11 +2,22 @@ import { Avatar, Button, Navbar } from '@nextui-org/react';
 import useAuthStore from '../../../store/AuthStore';
 
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 
-const NavBar = () => {
+import OpenSideBar from '../../../assets/openSideBar.svg';
+
+const NavBar = ({
+	setSideBarOpen,
+}: {
+	setSideBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
 	const { user, isAuth } = useAuthStore();
 	const navigate = useNavigate();
 	const pathName = location.pathname;
+	const isMobile = useMediaQuery({ query: '(max-width: 1224px)' });
+	const openSideBar = () => {
+		setSideBarOpen(true);
+	};
 	return (
 		<Navbar
 			isBordered
@@ -14,6 +25,17 @@ const NavBar = () => {
 				backgroundColor: 'rgba(0,0,0,0.001)',
 			}}
 		>
+			{isMobile && (
+				<div
+					className="cursor-pointer"
+					onClick={openSideBar}
+				>
+					<img
+						src={OpenSideBar}
+						width={30}
+					/>
+				</div>
+			)}
 			<div
 				style={{
 					display: 'flex',
@@ -21,58 +43,59 @@ const NavBar = () => {
 					gap: '20px',
 				}}
 			>
-				<div
-					style={{
-						backgroundColor: 'white',
-						width: '30px',
-						height: '30px',
-					}}
-				></div>
+				<img
+					src="cubeLogo.svg"
+					width={40}
+				/>
 				<p>Cubify</p>
 			</div>
-			<div
-				style={{
-					display: 'flex',
-					gap: '20px',
-				}}
-			>
-				<p
+			{!isMobile && (
+				<div
 					style={{
-						cursor: 'pointer',
-						opacity: pathName == '/' ? '0.5' : '1',
-						borderBottom: pathName == '/' ? '1px solid' : '',
-					}}
-					onClick={() => {
-						navigate('/');
+						display: 'flex',
+						gap: '20px',
 					}}
 				>
-					Home
-				</p>
-				<p
-					style={{
-						cursor: 'pointer',
-						opacity: pathName == '/cubes' ? '0.5' : '1',
-						borderBottom: pathName == '/cubes' ? '1px solid' : '',
-					}}
-					onClick={() => {
-						navigate('/cubes');
-					}}
-				>
-					Cubes
-				</p>
-				<p
-					style={{
-						cursor: 'pointer',
-						opacity: pathName == '/create_cube' ? '0.5' : '1',
-						borderBottom: pathName == '/create_cube' ? '1px solid' : '',
-					}}
-					onClick={() => {
-						navigate('/create_cube');
-					}}
-				>
-					Create a cube
-				</p>
-			</div>
+					{!isAuth && (
+						<p
+							style={{
+								cursor: 'pointer',
+								opacity: pathName == '/' ? '0.5' : '1',
+								borderBottom: pathName == '/' ? '1px solid' : '',
+							}}
+							onClick={() => {
+								navigate('/');
+							}}
+						>
+							Home
+						</p>
+					)}
+					<p
+						style={{
+							cursor: 'pointer',
+							opacity: pathName == '/cubes' ? '0.5' : '1',
+							borderBottom: pathName == '/cubes' ? '1px solid' : '',
+						}}
+						onClick={() => {
+							navigate('/cubes');
+						}}
+					>
+						Cubes
+					</p>
+					<p
+						style={{
+							cursor: 'pointer',
+							opacity: pathName == '/create_cube' ? '0.5' : '1',
+							borderBottom: pathName == '/create_cube' ? '1px solid' : '',
+						}}
+						onClick={() => {
+							navigate('/create_cube');
+						}}
+					>
+						Create a cube
+					</p>
+				</div>
+			)}
 			<div
 				style={{
 					display: 'flex',
@@ -100,7 +123,7 @@ const NavBar = () => {
 							<Avatar src={user?.avatar} />
 						</>
 					) : (
-						<div className="flex gap-4">
+						<div className={`flex ${isMobile ? 'gap-1' : 'gap-4'}`}>
 							<Button
 								size="sm"
 								color="primary"

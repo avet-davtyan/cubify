@@ -8,12 +8,12 @@ import useAuthStore from '../../../store/AuthStore';
 import { useNavigate } from 'react-router-dom';
 import { toast, Flip } from 'react-toastify';
 import { AxiosError, isAxiosError } from 'axios';
-
+import { useMediaQuery } from 'react-responsive';
 const SignInForm: React.FC = () => {
 	const authStore = useAuthStore();
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const navigate = useNavigate();
-
+	const isMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 	const [signInLoading, setSignInLoading] = useState<boolean>(false);
 
 	const toggleVisibility = () => setIsVisible(!isVisible);
@@ -65,26 +65,28 @@ const SignInForm: React.FC = () => {
 		password: '',
 	};
 	return (
-		<Card className="p-10  rounded">
-			<div className="w-full flex justify-center mb-10">
+		<Card className={`p-10  rounded flex items-center ${isMobile ? '' : 'w-unit-8xl'}`}>
+			<div className="w-full flex justify-center">
 				<p className="text-2xl">Welcome back</p>
 			</div>
-
-			<div className="w-full flex justify-center">
-				<Image
-					src={cubifyAv}
-					width={50}
-				/>
-			</div>
+			<img
+				src="cubeLogo.svg"
+				width={40}
+				className="m-3"
+			/>
 			<Formik
 				initialValues={initialValues}
 				validate={validate}
 				onSubmit={onSubmit}
 			>
 				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-					<form onSubmit={handleSubmit}>
-						<div className="flex flex-col gap-5">
+					<form
+						onSubmit={handleSubmit}
+						className="w-full"
+					>
+						<div className="flex flex-col gap-5 w-full">
 							<Input
+								className="w-full"
 								name="emailOrUsername"
 								isInvalid={errors.emailOrUsername && touched.emailOrUsername ? true : false}
 								errorMessage={
@@ -96,8 +98,7 @@ const SignInForm: React.FC = () => {
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.emailOrUsername}
-								size="lg"
-								className="w-unit-7xl"
+								size={isMobile ? 'sm' : 'lg'}
 							/>
 
 							<Input
@@ -110,7 +111,7 @@ const SignInForm: React.FC = () => {
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.password}
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
 								endContent={
 									<button
 										className="focus:outline-none"
@@ -142,16 +143,16 @@ const SignInForm: React.FC = () => {
 								color="primary"
 								disabled={isSubmitting}
 								isLoading={signInLoading}
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
 							>
 								Sign In
 							</Button>
 
 							<Button
 								className="rounded"
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
 								as={Link}
-								href="http://localhost:5029/auth/google"
+								href={`${import.meta.env.VITE_BACKEND_URL}/auth/google`}
 							>
 								Sign in with
 								<GoogleOutlined />

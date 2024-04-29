@@ -6,6 +6,7 @@ import CubeCanvas from './components/CubeCanvas';
 import { LikeFilled, LikeOutlined } from '@ant-design/icons';
 import useAuthStore from '../../../store/AuthStore';
 import { useNavigate } from 'react-router-dom';
+import { useMediaQuery } from 'react-responsive';
 
 const CubeCard = ({ cube }: { cube: Cube }) => {
 	const [liked, setLiked] = useState<boolean | null>(null);
@@ -13,6 +14,7 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 	const [cubeLoaded, setCubeLoaded] = useState<boolean>(false);
 	const { isAuth } = useAuthStore();
 	const [hover, setHover] = useState<boolean>(false);
+	const isMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 
 	const likeHandler = () => {
 		if (!liked) {
@@ -89,7 +91,7 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 						<p
 							style={{
 								transition: '0.1s all',
-								fontSize: cubeLoaded && hover ? '' : '0',
+								fontSize: cubeLoaded && (hover || isMobile) ? '' : '0',
 							}}
 						>
 							{cube.name}
@@ -97,7 +99,7 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 						<p
 							style={{
 								transition: '0.1s all',
-								fontSize: cubeLoaded && hover ? '12px' : '0',
+								fontSize: cubeLoaded && (hover || isMobile) ? '12px' : '0',
 								fontWeight: 'lighter',
 							}}
 						>
@@ -131,7 +133,7 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
 
 					<div
 						style={{
-							width: cubeLoaded && hover ? '100%' : '0',
+							width: cubeLoaded && (hover || isMobile) ? '100%' : '0',
 							transition: '0.3s all',
 							display: 'flex',
 							alignItems: 'center',

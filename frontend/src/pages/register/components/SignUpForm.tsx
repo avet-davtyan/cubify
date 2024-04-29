@@ -5,6 +5,7 @@ import { Button, Card, Image, Input, Link } from '@nextui-org/react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
 import cubifyAv from '../../../assets/rub.webp';
 import { Formik } from 'formik';
+import { useMediaQuery } from 'react-responsive';
 
 interface SignUpProps {
 	setIsOpen: Dispatch<SetStateAction<boolean>>;
@@ -15,6 +16,8 @@ interface SignUpProps {
 const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUpProps) => {
 	const [isVisible, setIsVisible] = useState<boolean>(false);
 	const [isVisibleConfirm, setIsVisibleConfirm] = useState<boolean>(false);
+
+	const isMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 
 	const [signUpLoading, setSignUpLoading] = useState<boolean>(false);
 
@@ -85,24 +88,26 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 		confirmPassword: '',
 	};
 	return (
-		<Card className="p-10">
-			<div className="w-full flex justify-center mb-20">
-				<p className="text-2xl">Create a Cubify account</p>
+		<Card className={`p-10 rounded items-center ${isMobile ? '' : 'w-unit-8xl'}`}>
+			<div className="w-full flex justify-center">
+				<p className="text-2xl">Create an account</p>
 			</div>
 
-			<div className="w-full flex justify-center">
-				<Image
-					src={cubifyAv}
-					width={50}
-				/>
-			</div>
+			<img
+				src="cubeLogo.svg"
+				width={40}
+				className="m-8"
+			/>
 			<Formik
 				initialValues={initialValues}
 				validate={validate}
 				onSubmit={onSubmit}
 			>
 				{({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
-					<form onSubmit={handleSubmit}>
+					<form
+						onSubmit={handleSubmit}
+						className="w-full"
+					>
 						<div className="flex flex-col gap-5">
 							<Input
 								type="email"
@@ -115,8 +120,7 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.email}
-								size="lg"
-								className="w-unit-7xl"
+								size={isMobile ? 'sm' : 'lg'}
 							/>
 
 							<Input
@@ -129,7 +133,7 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.username}
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
 							/>
 
 							<Input
@@ -142,7 +146,7 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.fullName}
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
 							/>
 
 							<Input
@@ -155,7 +159,7 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.password}
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
 								endContent={
 									<button
 										className="focus:outline-none"
@@ -184,7 +188,7 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 								onChange={handleChange}
 								onBlur={handleBlur}
 								value={values.confirmPassword}
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
 								endContent={
 									<button
 										className="focus:outline-none"
@@ -212,11 +216,11 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 							</div>
 							<Button
 								type="submit"
-								variant="shadow"
 								color="primary"
 								disabled={isSubmitting}
 								isLoading={signUpLoading}
-								size="lg"
+								size={isMobile ? 'sm' : 'lg'}
+								className="rounded"
 							>
 								Sign Up
 							</Button>
