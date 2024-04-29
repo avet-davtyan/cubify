@@ -3,7 +3,7 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import api from '../../http/base_api';
 import { Cube } from '../../types/CubeTypes';
 import CubeCard from './components/CubeCard';
-import { Avatar, Pagination, Skeleton } from '@nextui-org/react';
+import { Avatar, Pagination } from '@nextui-org/react';
 import { GeneralUser } from '../../types/AuthTypes';
 import useAuthStore from '../../store/AuthStore';
 

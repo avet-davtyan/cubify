@@ -125,6 +125,19 @@ export class CubeService {
 		return cubesMostRecentlyPublished;
 	}
 
+	async getLikedCubes(req: Request): Promise<Cube[]> {
+		const payload = req['payload'] as { id: string };
+		const cubes = await this.prismaService.like.findMany({
+			where: {
+				userId: payload.id,
+			},
+			include: {
+				cube: true,
+			},
+		});
+		return cubes.map((cube) => cube.cube);
+	}
+
 	async getCubeCount(): Promise<number> {
 		const cubeCount = await this.prismaService.cube.count({
 			where: {

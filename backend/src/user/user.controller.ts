@@ -20,7 +20,6 @@ export class UserController {
 
 	@Get('find/:username')
 	async findOneByUsername(@Param() params: { username: string }): Promise<User | GoogleUser> {
-		console.log('here');
 		return await this.userService.findOneByUsername(params.username);
 	}
 

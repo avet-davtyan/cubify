@@ -50,20 +50,25 @@ export class CubeController {
 
 	@Get('/specific/:id')
 	async findOne(@Param() params: { id: string }): Promise<Cube> {
-		console.log(params);
 		return await this.cubeService.findOne(+params.id);
 	}
 
 	@UseGuards(AuthGuardJWT)
 	@Post('like')
 	async like(@Req() req, @Body() body: { cubeId: number }) {
-		return this.interactionService.like(req, body);
+		return await this.interactionService.like(req, body);
 	}
 
 	@UseGuards(AuthGuardJWT)
 	@Post('removeLike')
 	async removeLike(@Req() req, @Body() body: { cubeId: number }) {
-		return this.interactionService.removeLike(req, body);
+		return await this.interactionService.removeLike(req, body);
+	}
+
+	@UseGuards(AuthGuardJWT)
+	@Get('likedCubes')
+	async getLikedCubes(@Req() req): Promise<Cube[]> {
+		return await this.cubeService.getLikedCubes(req);
 	}
 
 	@Post('getLikes')
