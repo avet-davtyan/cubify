@@ -1,0 +1,14 @@
+FROM node:20.11.1
+
+WORKDIR /app/frontend
+
+COPY ./frontend/package.json ./frontend/package-lock.json ./
+
+RUN npm install
+
+COPY ./frontend .
+
+EXPOSE ${FRONTEND_DEV_PORT} 2950
+
+CMD ["npm", "run", "dev", "--", "--host"]
+

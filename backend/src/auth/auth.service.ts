@@ -190,6 +190,6 @@ export class AuthService {
 		const refreshToken = await this.refreshTokenStrategy.generateRefreshToken({
 			id: googleUser.id,
 		});
-		res.redirect(`http://localhost:2950/?at=${accessToken}&rt=${refreshToken}`);
+		res.redirect(`${process.env.FRONTEND_URL}/?at=${accessToken}&rt=${refreshToken}`);
 	}
 }

@@ -35,7 +35,7 @@ export class CubeService {
 			},
 		});
 
-		const cubeDir = join('cube_images', createdCube.id.toString());
+		const cubeDir = join(process.env.CUBE_IMAGES, createdCube.id.toString());
 
 		try {
 			await fs.mkdirSync(cubeDir, { recursive: true });
@@ -83,6 +83,7 @@ export class CubeService {
 		const cube = await this.prismaService.cube.findFirst({
 			where: {
 				id: id,
+				pending: false,
 			},
 		});
 		if (cube === null) {
@@ -100,6 +101,9 @@ export class CubeService {
 					_count: 'desc',
 				},
 			},
+			where: {
+				pending: false,
+			},
 			include: {
 				Like: true,
 			},
@@ -114,12 +118,19 @@ export class CubeService {
 			orderBy: {
 				createdAt: 'desc',
 			},
+			where: {
+				pending: false,
+			},
 		});
 		return cubesMostRecentlyPublished;
 	}
 
 	async getCubeCount(): Promise<number> {
-		const cubeCount = await this.prismaService.cube.count();
+		const cubeCount = await this.prismaService.cube.count({
+			where: {
+				pending: false,
+			},
+		});
 		return cubeCount;
 	}
 
@@ -127,6 +138,7 @@ export class CubeService {
 		const cubes = await this.prismaService.cube.findMany({
 			where: {
 				ownerId: userId,
+				pending: false,
 			},
 			orderBy: {
 				createdAt: 'desc',
@@ -146,6 +158,7 @@ export class CubeService {
 		const count = this.prismaService.cube.count({
 			where: {
 				ownerId: userId,
+				pending: false,
 			},
 		});
 
