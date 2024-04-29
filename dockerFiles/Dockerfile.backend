@@ -1,13 +1,15 @@
-FROM node:20.11.1
-
+FROM node:20.11.1 AS builder
 WORKDIR /app/backend
-
 COPY ./backend/package.json ./backend/package-lock.json ./
-
 RUN npm install
-
 COPY ./backend .
 
-EXPOSE ${BACKEND_DEV_PORT} 5029
+FROM builder AS migration
+RUN npm install -g prisma
+RUN npx prisma migrate dev
 
+FROM node:20.11.1 AS final
+WORKDIR /app/backend
+COPY --from=builder /app/backend .
+EXPOSE ${BACKEND_DEV_PORT} 5029
 CMD ["npm", "run", "start:dev"]

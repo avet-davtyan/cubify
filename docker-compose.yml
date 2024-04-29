@@ -10,6 +10,7 @@ services:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     env_file:
       - .env
+
   pgadmin:
     container_name: cubify_pgadmin
     image: dpage/pgadmin4:latest
@@ -35,15 +36,15 @@ services:
 
   frontend:
     container_name: cubify_frontend
-    image: node:20.11.1
-    working_dir: /app/frontend
+    build:
+      context: .
+      dockerfile: dockerFiles/Dockerfile.frontend
     volumes:
       - ./frontend:/app/frontend
     ports:
       - "${FRONTEND_DEV_PORT}:5173"
     env_file:
       - .env
-    command: sh -c "npm run dev -- --host"
 
 volumes:
   cubify_volume_dev:
