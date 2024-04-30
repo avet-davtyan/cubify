@@ -6,7 +6,7 @@ import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
 import cubifyAv from '../../../assets/rub.webp';
 import { Formik } from 'formik';
 import { useMediaQuery } from 'react-responsive';
-
+import cubeLogo from '../../../assets/cubeLogo.svg';
 interface SignUpProps {
 	setIsOpen: Dispatch<SetStateAction<boolean>>;
 	setIsOpenError: Dispatch<SetStateAction<boolean>>;
@@ -93,10 +93,10 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 				<p className="text-2xl">Create an account</p>
 			</div>
 
-			<img
-				src="cubeLogo.svg"
+			<Image
+				src={cubeLogo}
 				width={40}
-				className="m-8"
+				className="m-8 rounded-none"
 			/>
 			<Formik
 				initialValues={initialValues}

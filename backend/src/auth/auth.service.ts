@@ -80,6 +80,7 @@ export class AuthService {
 				fullName: user.googleUser.fullName,
 				googleId: user.googleUser.googleId,
 				avatar: user.googleUser.avatar,
+				username: user.username,
 			};
 		}
 		if (user.simpleUser) {

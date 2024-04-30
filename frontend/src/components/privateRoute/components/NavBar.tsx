@@ -1,10 +1,23 @@
-import { Avatar, Button, Navbar } from '@nextui-org/react';
+import {
+	Avatar,
+	Button,
+	Card,
+	CardHeader,
+	DropdownItem,
+	DropdownMenu,
+	DropdownTrigger,
+	Navbar,
+	Image,
+	NavbarContent,
+} from '@nextui-org/react';
 import useAuthStore from '../../../store/AuthStore';
 
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useMediaQuery } from 'react-responsive';
-
 import OpenSideBar from '../../../assets/openSideBar.svg';
+import cubeLogo from '../../../assets/cubeLogo.svg';
+import { DownOutlined, SearchOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 
 const NavBar = ({
 	setSideBarOpen,
@@ -18,6 +31,7 @@ const NavBar = ({
 	const openSideBar = () => {
 		setSideBarOpen(true);
 	};
+
 	return (
 		<Navbar
 			isBordered
@@ -27,7 +41,7 @@ const NavBar = ({
 		>
 			{isMobile && (
 				<div
-					className="cursor-pointer"
+					className="cursor-pointer h-full p-4 flex items-center"
 					onClick={openSideBar}
 				>
 					<img
@@ -43,9 +57,10 @@ const NavBar = ({
 					gap: '20px',
 				}}
 			>
-				<img
-					src="cubeLogo.svg"
+				<Image
+					src={cubeLogo}
 					width={40}
+					className="rounded-none"
 				/>
 				<p>Cubify</p>
 			</div>
@@ -82,17 +97,34 @@ const NavBar = ({
 					>
 						Cubes
 					</p>
+
+					{isAuth && (
+						<p
+							style={{
+								cursor: 'pointer',
+								opacity: pathName == '/create_cube' ? '0.5' : '1',
+								borderBottom: pathName == '/create_cube' ? '1px solid' : '',
+							}}
+							onClick={() => {
+								navigate('/create_cube');
+							}}
+						>
+							Create a cube
+						</p>
+					)}
 					<p
 						style={{
 							cursor: 'pointer',
-							opacity: pathName == '/create_cube' ? '0.5' : '1',
-							borderBottom: pathName == '/create_cube' ? '1px solid' : '',
+							opacity: pathName == '/search' ? '0.5' : '1',
+							borderBottom: pathName == '/search' ? '1px solid' : '',
 						}}
 						onClick={() => {
-							navigate('/create_cube');
+							navigate('/search');
 						}}
+						className="flex gap-2 items-center"
 					>
-						Create a cube
+						Search
+						<SearchOutlined />
 					</p>
 				</div>
 			)}
@@ -111,41 +143,45 @@ const NavBar = ({
 						gap: '15px',
 					}}
 				>
-					{isAuth ? (
-						<>
-							<p
-								style={{
-									opacity: '0.7',
-								}}
-							>
-								{user?.fullName}
-							</p>
-							<Avatar src={user?.avatar} />
-						</>
-					) : (
-						<div className={`flex ${isMobile ? 'gap-1' : 'gap-4'}`}>
-							<Button
-								size="sm"
-								color="primary"
-								variant="shadow"
-								onClick={() => {
-									navigate('/login');
-								}}
-							>
-								Sign In
-							</Button>
-							<Button
-								size="sm"
-								color="primary"
-								variant="bordered"
-								onClick={() => {
-									navigate('/register');
-								}}
-							>
-								Sign Up
-							</Button>
-						</div>
-					)}
+					{isAuth
+						? !isMobile && (
+								<a href={`/${user?.username}`}>
+									<div className="flex flex-row items-center gap-5 cursor-pointer relative ">
+										<p
+											style={{
+												opacity: '0.7',
+											}}
+										>
+											{user?.fullName}
+										</p>
+										<Avatar src={user?.avatar} />
+									</div>
+								</a>
+						  )
+						: !isMobile && (
+								<div className={`flex ${isMobile ? 'gap-1' : 'gap-4'}`}>
+									<Button
+										size="sm"
+										color="primary"
+										variant="shadow"
+										onClick={() => {
+											navigate('/login');
+										}}
+									>
+										Sign In
+									</Button>
+									<Button
+										size="sm"
+										color="primary"
+										variant="bordered"
+										onClick={() => {
+											navigate('/register');
+										}}
+									>
+										Sign Up
+									</Button>
+								</div>
+						  )}
 				</div>
 			</div>
 		</Navbar>

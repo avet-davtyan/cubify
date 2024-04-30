@@ -5,10 +5,17 @@ import { Button, Input, Textarea } from '@nextui-org/react';
 
 import { Toaster } from 'react-hot-toast';
 
+import { toast, Flip } from 'react-toastify';
+
 import useCreateCubeStore from '../../store/CreateCubeStore';
 import api from '../../http/base_api';
+import { AxiosError, isAxiosError } from 'axios';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../../store/AuthStore';
 const CreateCube: React.FC = () => {
-	const { setCubeDescription, setCubeName, sides } = useCreateCubeStore();
+	const { setCubeDescription, setCubeName, sides, cubeName, resetSides } = useCreateCubeStore();
+	const navigate = useNavigate();
+	const { user } = useAuthStore();
 	return (
 		<div className="w-full h-full absolute flex justify-center items-center">
 			<div
@@ -43,19 +50,24 @@ const CreateCube: React.FC = () => {
 								setCubeName(e.target.value);
 							}}
 						/>
-						<Textarea
-							label="Description"
-							placeholder="Enter your description"
-							variant="underlined"
-							size="lg"
-							onChange={(e) => {
-								setCubeDescription(e.target.value);
-							}}
-						/>
 						<Button
 							variant="shadow"
 							color="primary"
 							onPress={async () => {
+								if (!cubeName) {
+									toast.error("Please set cube's name", {
+										position: 'top-center',
+										autoClose: 1000,
+										hideProgressBar: true,
+										closeOnClick: true,
+										pauseOnHover: true,
+										draggable: true,
+										progress: undefined,
+										theme: 'dark',
+										transition: Flip,
+									});
+									return;
+								}
 								const formData = new FormData();
 								sides.side1 && formData.append('image1', sides.side1);
 								sides.side2 && formData.append('image2', sides.side2);
@@ -63,18 +75,32 @@ const CreateCube: React.FC = () => {
 								sides.side4 && formData.append('image4', sides.side4);
 								sides.side5 && formData.append('image5', sides.side5);
 								sides.side6 && formData.append('image6', sides.side6);
-								formData.append('name', 'test_cube');
-								formData.append('description', '...');
+
+								formData.append('name', cubeName);
 								try {
-									const response = await api.post('cube/create_cube', formData);
-									console.log(response.data);
-								} catch (error) {
-									console.log(error);
+									await api.post('cube/create_cube', formData);
+									navigate(`/${user?.username}`);
+									setCubeName(null);
+									resetSides();
+								} catch (e) {
+									const error = e as Error | AxiosError;
+									if (isAxiosError(error)) {
+										toast.error(error.response?.data.message, {
+											position: 'top-center',
+											autoClose: 1000,
+											hideProgressBar: true,
+											closeOnClick: true,
+											pauseOnHover: true,
+											draggable: true,
+											progress: undefined,
+											theme: 'dark',
+											transition: Flip,
+										});
+									}
 								}
 							}}
-							// isDisabled={Object.keys(sides).length !== 6}
 						>
-							Send to backend
+							Post a Cube
 						</Button>
 						<Toaster />
 					</div>

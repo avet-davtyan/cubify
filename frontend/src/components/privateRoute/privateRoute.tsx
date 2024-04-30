@@ -6,6 +6,7 @@ import SquareLoader from 'react-spinners/SquareLoader';
 import useCubeStore from '../../store/CubeStore';
 import { AxiosError, isAxiosError } from 'axios';
 import SideBar from './components/SideBar';
+import { useMediaQuery } from 'react-responsive';
 
 function PrivateRoute() {
 	const authStore = useAuthStore();
@@ -13,7 +14,7 @@ function PrivateRoute() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const [sideBarOpen, setSideBarOpen] = useState<boolean>(false);
-
+	const isMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 	useEffect(() => {
 		const fetch = async () => {
 			try {
@@ -27,7 +28,6 @@ function PrivateRoute() {
 				searchParams.delete('rt');
 				await cubeStore.getCubeCount();
 				await authStore.verify();
-				navigate('cubes');
 			} catch (e) {
 				const error = e as Error | AxiosError;
 				if (isAxiosError(error)) {
@@ -74,10 +74,12 @@ function PrivateRoute() {
 						<NavBar setSideBarOpen={setSideBarOpen} />
 						<Outlet />
 					</div>
-					<SideBar
-						sideBarOpen={sideBarOpen}
-						setSideBarOpen={setSideBarOpen}
-					/>
+					{isMobile && (
+						<SideBar
+							sideBarOpen={sideBarOpen}
+							setSideBarOpen={setSideBarOpen}
+						/>
+					)}
 				</>
 			)}
 		</>

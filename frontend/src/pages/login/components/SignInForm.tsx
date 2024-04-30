@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast, Flip } from 'react-toastify';
 import { AxiosError, isAxiosError } from 'axios';
 import { useMediaQuery } from 'react-responsive';
+import cubeLogo from '../../../assets/cubeLogo.svg';
 const SignInForm: React.FC = () => {
 	const authStore = useAuthStore();
 	const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -69,10 +70,10 @@ const SignInForm: React.FC = () => {
 			<div className="w-full flex justify-center">
 				<p className="text-2xl">Welcome back</p>
 			</div>
-			<img
-				src="cubeLogo.svg"
+			<Image
+				src={cubeLogo}
 				width={40}
-				className="m-3"
+				className="m-3 rounded-none"
 			/>
 			<Formik
 				initialValues={initialValues}

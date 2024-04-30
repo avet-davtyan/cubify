@@ -15,6 +15,7 @@ export class CubeService {
 		createCubeBodyDto: CreateCubeBodyDto,
 		request: Request,
 	): Promise<Cube> {
+		console.log(createCubeFilesDto);
 		const payload = request['payload'] as { id: string };
 
 		for (const image in createCubeFilesDto) {

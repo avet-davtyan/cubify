@@ -15,9 +15,11 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CubePage from './pages/cube/cube';
 import Search from './pages/search/search';
+import useAuthStore from './store/AuthStore';
 
 function App() {
 	const { darkMode } = useDarkModeStore();
+	const { isAuth } = useAuthStore();
 	return (
 		<NextUIProvider>
 			<NextThemesProvider
@@ -46,10 +48,12 @@ function App() {
 								path="/search"
 								element={<Search />}
 							/>
-							<Route
-								path="/create_cube"
-								element={<CreateCube />}
-							/>
+							{isAuth && (
+								<Route
+									path="/create_cube"
+									element={<CreateCube />}
+								/>
+							)}
 							<Route
 								path="/:username"
 								element={<UserPage />}

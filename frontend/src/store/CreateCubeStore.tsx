@@ -17,8 +17,9 @@ interface CreateCubeState {
 	cubeDescription: string | null;
 	setSide: (sideIndex: number, file: File) => void;
 	setPreviewImage: (imageIndex: number, base64String: Base64) => void;
+	resetSides: () => void;
 	setColor: (color: string) => void;
-	setCubeName: (cubeName: string) => void;
+	setCubeName: (cubeName: string | null) => void;
 	setCubeDescription: (cubeDescription: string) => void;
 }
 
@@ -34,6 +35,11 @@ const useCreateCubeStore = create<CreateCubeState>((set) => ({
 				...state.sides,
 				[`side${sideIndex}`]: file,
 			},
+		}));
+	},
+	resetSides() {
+		set(() => ({
+			sides: {},
 		}));
 	},
 	setPreviewImage: (imageIndex, base64String) => {

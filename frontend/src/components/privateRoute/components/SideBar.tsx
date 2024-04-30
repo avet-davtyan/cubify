@@ -1,6 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../../store/AuthStore';
 import CloseSideBar from '../../../assets/closeSideBar.svg';
+import { SearchOutlined } from '@ant-design/icons';
+import { useMediaQuery } from 'react-responsive';
+import { Avatar, Button } from '@nextui-org/react';
 
 const SideBar = ({
 	sideBarOpen,
@@ -12,7 +15,8 @@ const SideBar = ({
 	const pathName = location.pathname;
 	const { isAuth } = useAuthStore();
 	const navigate = useNavigate();
-
+	const { user } = useAuthStore();
+	const isMobile = useMediaQuery({ query: '(max-width: 1224px)' });
 	const navigateAndClose = (path: string) => {
 		navigate(path);
 		setSideBarOpen(false);
@@ -38,6 +42,45 @@ const SideBar = ({
 				gap: '40px',
 			}}
 		>
+			{isAuth
+				? isMobile && (
+						<a href={`/${user?.username}`}>
+							<div className="flex items-center gap-3">
+								<p
+									style={{
+										opacity: '0.7',
+									}}
+								>
+									{user?.fullName}
+								</p>
+								<Avatar src={user?.avatar} />
+							</div>
+						</a>
+				  )
+				: isMobile && (
+						<div className={`flex ${isMobile ? 'gap-1' : 'gap-4'}`}>
+							<Button
+								size="sm"
+								color="primary"
+								variant="shadow"
+								onClick={() => {
+									navigate('/login');
+								}}
+							>
+								Sign In
+							</Button>
+							<Button
+								size="sm"
+								color="primary"
+								variant="bordered"
+								onClick={() => {
+									navigate('/register');
+								}}
+							>
+								Sign Up
+							</Button>
+						</div>
+				  )}
 			{!isAuth && (
 				<p
 					style={{
@@ -67,15 +110,32 @@ const SideBar = ({
 			<p
 				style={{
 					cursor: 'pointer',
-					opacity: pathName == '/create_cube' ? '0.5' : '1',
-					borderBottom: pathName == '/create_cube' ? '1px solid' : '',
+					opacity: pathName == '/search' ? '0.5' : '1',
+					borderBottom: pathName == '/search' ? '1px solid' : '',
 				}}
 				onClick={() => {
-					navigateAndClose('/create_cube');
+					navigateAndClose('/search');
 				}}
 			>
-				Create a cube
+				<div className="flex gap-2 items-center">
+					Search
+					<SearchOutlined />
+				</div>
 			</p>
+			{isAuth && (
+				<p
+					style={{
+						cursor: 'pointer',
+						opacity: pathName == '/create_cube' ? '0.5' : '1',
+						borderBottom: pathName == '/create_cube' ? '1px solid' : '',
+					}}
+					onClick={() => {
+						navigateAndClose('/create_cube');
+					}}
+				>
+					Create a cube
+				</p>
+			)}
 			<div
 				className="absolute right-5 top-5 cursor-pointer"
 				onClick={closeSideBar}

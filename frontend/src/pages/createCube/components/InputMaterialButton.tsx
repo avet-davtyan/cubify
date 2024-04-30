@@ -1,6 +1,7 @@
 import { Html } from '@react-three/drei';
 import { useRef } from 'react';
 import useCreateCubeStore from '../../../store/CreateCubeStore';
+import { toast, Flip } from 'react-toastify';
 
 const InputMaterialButton = ({
 	index,
@@ -15,8 +16,41 @@ const InputMaterialButton = ({
 		hiddenFileInput.current.click();
 	};
 
+	const extensions = ['png', 'jpg', 'jpeg', 'webp'];
+
 	const handleFileInputChange = (e: any) => {
 		const file = e.target.files[0];
+
+		const extension = file.name.match(/\.[0-9a-z]+$/i)[0].substring(1);
+		if (!extensions.includes(extension)) {
+			toast.error('wrong type', {
+				position: 'top-center',
+				autoClose: 3000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'dark',
+				transition: Flip,
+			});
+			return;
+		}
+
+		if (file.size > 1024 * 1024) {
+			toast.error('Image is too large', {
+				position: 'top-center',
+				autoClose: 3000,
+				hideProgressBar: true,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: 'dark',
+				transition: Flip,
+			});
+			return;
+		}
 		const reader = new FileReader();
 		reader.onloadend = () => {
 			setSide(index, file);
@@ -39,7 +73,6 @@ const InputMaterialButton = ({
 					backgroundColor: `${
 						previewImages[`image${index}`] ? 'rgba(0,255,0,0.1)' : 'rgba(0,0,255ex,0.1)'
 					}`,
-					// opacity: '0.4',
 					border: `3px solid ${previewImages[`image${index}`] ? '#17C964' : '#006FEE'}`,
 				}}
 			></div>
