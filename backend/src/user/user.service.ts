@@ -9,6 +9,7 @@ export class UserService {
 		const _user = await this.prismaService.userAuthentication.findFirst({
 			where: {
 				id: id,
+				verified: true,
 			},
 			include: { simpleUser: true, googleUser: true },
 		});
@@ -41,6 +42,7 @@ export class UserService {
 		const _user = await this.prismaService.userAuthentication.findFirst({
 			where: {
 				username: username,
+				verified: true,
 			},
 			include: { simpleUser: true, googleUser: true },
 		});
