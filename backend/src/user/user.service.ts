@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { GoogleUser, User } from 'src/auth/types/user.types';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../src/prisma/prisma.service';
 
 @Injectable()
 export class UserService {
 	constructor(private prismaService: PrismaService) {}
 	async findOne(id: string): Promise<User | GoogleUser> {
-		const _user = await this.prismaService.userAuthentication.findFirst({
+		const _user = await this.prismaService.userAuthentication.findUnique({
 			where: {
 				id: id,
 				verified: true,
@@ -39,7 +39,7 @@ export class UserService {
 	}
 
 	async findOneByUsername(username: string): Promise<User | GoogleUser> {
-		const _user = await this.prismaService.userAuthentication.findFirst({
+		const _user = await this.prismaService.userAuthentication.findUnique({
 			where: {
 				username: username,
 				verified: true,
