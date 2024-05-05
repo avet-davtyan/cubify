@@ -10,25 +10,25 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { LoginUserDto } from '../dtos/AuthUser.dto';
-import { GoogleUser, SimpleUser, UserAuth } from '../types/user.types';
-import { User, UserAuthentication } from '@prisma/client';
+import { GoogleAccount, LocalAccount, User } from '@prisma/client';
 import { Request } from 'express';
+import { UserAccountsIncluded } from '../types/user.types';
 
 @Injectable()
 export class ValidationService {
 	constructor(private prismaService: PrismaService) {}
-	async login(loginUserDto: LoginUserDto): Promise<User> {
-		const userAuth = await this.prismaService.userAuthentication.findFirst({
+	async login(loginUserDto: LoginUserDto): Promise<LocalAccount> {
+		const user = await this.prismaService.user.findFirst({
 			where: {
 				username: loginUserDto.emailOrUsername,
 			},
-			include: { simpleUser: true },
+			include: { localAccount: true },
 		});
 
-		let user;
+		let localAccount;
 
-		if (!userAuth) {
-			user = await this.prismaService.user.findFirst({
+		if (!user) {
+			localAccount = await this.prismaService.localAccount.findFirst({
 				where: {
 					email: loginUserDto.emailOrUsername,
 				},
@@ -37,21 +37,21 @@ export class ValidationService {
 				throw new NotFoundException('Wrong username or email');
 			}
 		} else {
-			if (!userAuth.simpleUser) {
+			if (!user.localAccount) {
 				throw new BadRequestException('User is registered with other services');
 			}
-			user = userAuth.simpleUser;
+			localAccount = user.localAccount;
 		}
 
-		return user;
+		return localAccount;
 	}
 
-	async verify(req: Request): Promise<UserAuth> {
-		const user = await this.prismaService.userAuthentication.findFirst({
+	async verify(req: Request): Promise<UserAccountsIncluded> {
+		const user = await this.prismaService.user.findFirst({
 			where: {
 				id: req['payload'].id,
 			},
-			include: { simpleUser: true, googleUser: true },
+			include: { localAccount: true, googleAccount: true },
 		});
 
 		if (user === null) {
@@ -68,12 +68,12 @@ export class ValidationService {
 		return user;
 	}
 
-	async verifyGoogle(req: Request): Promise<UserAuth> {
-		const user = await this.prismaService.userAuthentication.findFirst({
+	async verifyGoogle(req: Request): Promise<UserAccountsIncluded> {
+		const user = await this.prismaService.user.findFirst({
 			where: {
 				id: req['payload'].id,
 			},
-			include: { googleUser: true, simpleUser: true },
+			include: { googleAccount: true, localAccount: true },
 		});
 		if (user === null) {
 			throw new NotFoundException('User is not found');
@@ -85,12 +85,12 @@ export class ValidationService {
 		return user;
 	}
 
-	async verifyNotVerified(req: Request): Promise<UserAuth> {
-		const user = await this.prismaService.userAuthentication.findFirst({
+	async verifyNotVerified(req: Request): Promise<UserAccountsIncluded> {
+		const user = await this.prismaService.user.findFirst({
 			where: {
 				id: req['payload'].id,
 			},
-			include: { googleUser: true, simpleUser: true },
+			include: { googleAccount: true, localAccount: true },
 		});
 		if (user === null) {
 			throw new NotFoundException('User is not found');
@@ -103,8 +103,8 @@ export class ValidationService {
 		return user;
 	}
 
-	async createUsername(req: Request, usernameData: { username: string }): Promise<UserAuth> {
-		const user = await this.prismaService.userAuthentication.findFirst({
+	async createUsername(req: Request, usernameData: { username: string }): Promise<User> {
+		const user = await this.prismaService.user.findFirst({
 			where: {
 				id: req['payload'].id,
 			},
@@ -117,7 +117,7 @@ export class ValidationService {
 			throw new BadRequestException('User already has a username');
 		}
 
-		const existingUser = await this.prismaService.userAuthentication.findFirst({
+		const existingUser = await this.prismaService.user.findFirst({
 			where: {
 				username: usernameData.username,
 			},

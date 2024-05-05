@@ -1,17 +1,13 @@
-export interface User {
+import { GoogleAccount, LocalAccount, User } from '@prisma/client';
+
+export interface LocalAccoutResponse {
 	id: string;
+	email: string;
 	username: string;
-	email: string;
 	fullName: string;
 }
 
-export interface SimpleUser {
-	id: string;
-	email: string;
-	fullName: string;
-}
-
-export interface GoogleUser {
+export interface GoogleAccountResponse {
 	id: string;
 	fullName: string;
 	email: string;
@@ -20,19 +16,7 @@ export interface GoogleUser {
 	username?: string;
 }
 
-export interface RegisteredUser {
-	id: string;
-	username: string;
-	email: string;
-	password: string;
-	fullName: string;
-}
-
-export interface UserAuth {
-	id: string;
-	simpleUser?: SimpleUser;
-	googleUser?: GoogleUser;
-	username?: string;
-	verificationToken: string;
-	verified: boolean;
+export interface UserAccountsIncluded extends User {
+	googleAccount?: GoogleAccount;
+	localAccount?: LocalAccount;
 }

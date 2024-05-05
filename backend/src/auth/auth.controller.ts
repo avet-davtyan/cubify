@@ -15,7 +15,6 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { AuthService } from './auth.service';
-import { User } from './types/user.types';
 import { AuthGuardJWT } from './guards/auth.guard';
 import { MailerService } from '@nestjs-modules/mailer';
 import { AuthGuard } from '@nestjs/passport';

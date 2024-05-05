@@ -1,7 +1,7 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { BadRequestException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { GoogleUser, User, UserAuth } from 'src/auth/types/user.types';
+import { UserAccountsIncluded } from 'src/auth/types/user.types';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,11 +13,11 @@ export class MailService {
 	) {}
 	async resendMail(req: Request) {
 		const payload = req['payload'] as { id: string };
-		const user = await this.prismaService.userAuthentication.findFirst({
+		const user = await this.prismaService.user.findUnique({
 			where: {
 				id: payload.id,
 			},
-			include: { simpleUser: true, googleUser: true },
+			include: { localAccount: true, googleAccount: true },
 		});
 		if (user === null) {
 			throw new NotFoundException('User is not found');
@@ -25,13 +25,13 @@ export class MailService {
 		if (user.verified) {
 			throw new BadRequestException('User is already verified');
 		}
-		if (user.googleUser) {
+		if (user.googleAccount) {
 			throw new BadRequestException('User is authenticated with google');
 		}
 
 		const verificationToken: string = uuidv4();
 
-		const newTokenUser = await this.prismaService.userAuthentication.update({
+		await this.prismaService.user.update({
 			where: {
 				id: user.id,
 			},
@@ -39,31 +39,31 @@ export class MailService {
 		});
 
 		await this.mailerService.sendMail({
-			to: user.simpleUser.email,
+			to: user.localAccount.email,
 			subject: 'Verify your email',
 			template: 'verification',
 			context: {
-				fullName: user.simpleUser.fullName,
+				fullName: user.localAccount.fullName,
 				verificationToken: verificationToken,
 			},
 		});
 		return HttpStatus.ACCEPTED;
 	}
 
-	async sendMail(user: UserAuth) {
+	async sendMail(user: UserAccountsIncluded) {
 		await this.mailerService.sendMail({
-			to: user.simpleUser.email,
+			to: user.localAccount.email,
 			subject: 'Verify your email',
 			template: 'verification',
 			context: {
-				fullName: user.simpleUser.fullName,
+				fullName: user.localAccount.fullName,
 				verificationToken: user.verificationToken,
 			},
 		});
 	}
 
 	async mailVerify(verificationToken: string, res: Response) {
-		const user = await this.prismaService.userAuthentication.findFirst({
+		const user = await this.prismaService.user.findUnique({
 			where: {
 				verificationToken,
 			},
@@ -76,13 +76,13 @@ export class MailService {
 			throw new BadRequestException('This user is already verified');
 		}
 
-		await this.prismaService.userAuthentication.update({
+		await this.prismaService.user.update({
 			where: {
 				verificationToken,
 			},
 			data: { verified: true },
 		});
 
-		res.redirect('http://localhost:2950/');
+		res.redirect(process.env.FRONTEND_URL);
 	}
 }

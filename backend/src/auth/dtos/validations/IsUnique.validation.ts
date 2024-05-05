@@ -19,7 +19,7 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
 		let user;
 		if (type === 'username') {
 			console.log(value);
-			user = await this.prismaService.userAuthentication.findFirst({
+			user = await this.prismaService.user.findFirst({
 				where: {
 					username: value,
 				},
@@ -31,7 +31,7 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
 						id: user.id,
 					},
 				});
-				await this.prismaService.userAuthentication.delete({
+				await this.prismaService.user.delete({
 					where: {
 						id: user.id,
 					},
@@ -39,12 +39,12 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
 				user = null;
 			}
 		} else if (type === 'email') {
-			user = await this.prismaService.user.findFirst({
+			user = await this.prismaService.localAccount.findFirst({
 				where: {
 					email: value,
 				},
 				include: {
-					userAuth: true,
+					user: true,
 				},
 			});
 
@@ -54,7 +54,7 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
 						id: user.id,
 					},
 				});
-				await this.prismaService.userAuthentication.delete({
+				await this.prismaService.user.delete({
 					where: {
 						id: user.id,
 					},

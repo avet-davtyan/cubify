@@ -7,40 +7,40 @@ datasource db {
   url      = "postgresql://postgres:admin@db:5432/cubify"
 }
 
-model User {
-  id       String             @id
-  userAuth UserAuthentication @relation(fields: [id], references: [id])
-  email    String             @unique
+model LocalAccount {
+  id       String @id
+  user     User   @relation(fields: [id], references: [id])
+  email    String @unique
   fullName String
   password String
 }
 
-model GoogleUser {
-  id       String             @id
-  userAuth UserAuthentication @relation(fields: [id], references: [id])
+model GoogleAccount {
+  id       String  @id
+  user     User    @relation(fields: [id], references: [id])
   fullName String
-  email    String             @unique
-  googleId String             @unique
+  email    String  @unique
+  googleId String  @unique
   avatar   String?
 }
 
-model UserAuthentication {
-  id                String      @id @default(uuid())
-  simpleUser        User?
-  googleUser        GoogleUser?
-  username          String?     @unique
-  verified          Boolean     @default(false)
-  verificationToken String      @unique @default(uuid())
+model User {
+  id                String         @id @default(uuid())
+  localAccount      LocalAccount?
+  googleAccount     GoogleAccount?
+  username          String?        @unique
+  verified          Boolean        @default(false)
+  verificationToken String         @unique @default(uuid())
   cubes             Cube[]
   likes             Like[]
 }
 
 model Cube {
-  id              Int                @id @default(autoincrement())
-  owner           UserAuthentication @relation(fields: [ownerId], references: [id])
+  id              Int      @id @default(autoincrement())
+  owner           User     @relation(fields: [ownerId], references: [id])
   ownerId         String
   name            String
-  pending         Boolean            @default(true)
+  pending         Boolean  @default(true)
   description     String?
   backgroundColor String?
   side1           String?
@@ -49,15 +49,15 @@ model Cube {
   side4           String?
   side5           String?
   side6           String?
-  createdAt       DateTime           @default(now())
+  createdAt       DateTime @default(now())
   Like            Like[]
 }
 
 model Like {
-  id     Int                @id @default(autoincrement())
-  user   UserAuthentication @relation(fields: [userId], references: [id])
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
   userId String
-  cube   Cube               @relation(fields: [cubeId], references: [id])
+  cube   Cube   @relation(fields: [cubeId], references: [id])
   cubeId Int
 
   @@unique([userId, cubeId])

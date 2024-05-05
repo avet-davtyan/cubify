@@ -1,25 +1,15 @@
-import {
-	Controller,
-	Post,
-	Body,
-	UseInterceptors,
-	UploadedFiles,
-	Get,
-	UseGuards,
-	Req,
-	Param,
-	Query,
-} from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { UserService } from './user.service';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { GoogleUser, User } from 'src/auth/types/user.types';
+import { GoogleAccountResponse, LocalAccoutResponse } from 'src/auth/types/user.types';
 
 @Controller('user')
 export class UserController {
 	constructor(private userService: UserService) {}
 
 	@Get('find/:username')
-	async findOneByUsername(@Param() params: { username: string }): Promise<User | GoogleUser> {
+	async findOneByUsername(
+		@Param() params: { username: string },
+	): Promise<LocalAccoutResponse | GoogleAccountResponse> {
 		return await this.userService.findOneByUsername(params.username);
 	}
 
@@ -28,7 +18,7 @@ export class UserController {
 		@Query('searchTerm') searchTerm: string,
 		@Query('page') page: number,
 		@Query('pageSize') pageSize: number,
-	): Promise<Array<User | GoogleUser>> {
+	): Promise<Array<LocalAccoutResponse | GoogleAccountResponse>> {
 		page = Math.floor(page) || 1;
 		pageSize = Math.floor(pageSize) || 20;
 		return await this.userService.searchUsers(searchTerm, page, pageSize);
@@ -40,7 +30,9 @@ export class UserController {
 	}
 
 	@Get(':id')
-	async findOne(@Param() params: { id: string }): Promise<User | GoogleUser> {
+	async findOne(
+		@Param() params: { id: string },
+	): Promise<LocalAccoutResponse | GoogleAccountResponse> {
 		return await this.userService.findOne(params.id);
 	}
 }
