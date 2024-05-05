@@ -1,5 +1,4 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from 'src/auth/types/user.types';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -16,7 +15,7 @@ export class InteractionService {
 		if (existingLike) {
 			throw new HttpException('Like already exists', HttpStatus.CONFLICT);
 		}
-		const newLike = await this.prismaService.like.create({
+		await this.prismaService.like.create({
 			data: {
 				userId: payload.id,
 				cubeId: body.cubeId,

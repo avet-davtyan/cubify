@@ -1,24 +1,18 @@
-import {
-	BadRequestException,
-	ConflictException,
-	ForbiddenException,
-	HttpException,
-	HttpStatus,
-	Injectable,
-	UnauthorizedException,
-	UnprocessableEntityException,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
-import { GoogleUser, SimpleUser, User, UserAuth } from './types/user.types';
+import {
+	GoogleAccountResponse,
+	LocalAccoutResponse,
+	UserAccountsIncluded,
+} from './types/user.types';
 import { PassService } from './services/pass.service';
 import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenStrategy } from './refreshToken.strategy';
-import { Headers } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { UserAuthentication } from '@prisma/client';
 import { MailService } from 'src/mail/mail.service';
 import { ValidationService } from './services/validation.service';
+import { GoogleAccount, LocalAccount } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -33,10 +27,10 @@ export class AuthService {
 
 	async register(createUserDto: CreateUserDto): Promise<string> {
 		const hashedPassword = await this.passService.hash(createUserDto.password);
-		const user = await this.prismaService.userAuthentication.create({
+		const user = await this.prismaService.user.create({
 			data: {
 				username: createUserDto.username,
-				simpleUser: {
+				localAccount: {
 					create: {
 						email: createUserDto.email,
 						fullName: createUserDto.fullName,
@@ -44,7 +38,7 @@ export class AuthService {
 					},
 				},
 			},
-			include: { simpleUser: true },
+			include: { localAccount: true },
 		});
 
 		await this.mailService.sendMail(user);
@@ -53,11 +47,11 @@ export class AuthService {
 	}
 
 	async login(loginUserDto: LoginUserDto): Promise<{ accessToken: string; refreshToken: string }> {
-		const user = await this.validationService.login(loginUserDto);
-		await this.passService.compare(loginUserDto.password, user.password);
+		const localAccount: LocalAccount = await this.validationService.login(loginUserDto);
+		await this.passService.compare(loginUserDto.password, localAccount.password);
 
 		const tokenPayload: { id: string } = {
-			id: user.id,
+			id: localAccount.id,
 		};
 		const accessToken = await this.jwtService.signAsync(tokenPayload);
 		const refreshToken = await this.refreshTokenStrategy.generateRefreshToken(tokenPayload);
@@ -69,11 +63,11 @@ export class AuthService {
 	}
 
 	async verify(req: Request) {
-		const user: UserAuth = await this.validationService.verify(req);
+		const user: UserAccountsIncluded = await this.validationService.verify(req);
 
-		let responseData: GoogleUser | User;
+		let responseData: LocalAccoutResponse | GoogleAccountResponse;
 
-		if (user.googleUser) {
+		if (user.googleAccount) {
 			responseData = {
 				id: user.id,
 				email: user.googleUser.email,
@@ -83,12 +77,12 @@ export class AuthService {
 				username: user.username,
 			};
 		}
-		if (user.simpleUser) {
+		if (user.localAccount) {
 			responseData = {
 				id: user.id,
-				email: user.simpleUser.email,
+				email: user.localAccount.email,
 				username: user.username,
-				fullName: user.simpleUser.fullName,
+				fullName: user.localAccount.fullName,
 			};
 		}
 
@@ -96,19 +90,19 @@ export class AuthService {
 	}
 
 	async verifyGoogle(req: Request) {
-		const user: UserAuth = await this.validationService.verifyGoogle(req);
+		const user: UserAccountsIncluded = await this.validationService.verifyGoogle(req);
 
 		let responseData: { fullName: string; avatar?: string };
 
-		if (user.googleUser) {
+		if (user.googleAccount) {
 			responseData = {
-				fullName: user.googleUser.fullName,
-				avatar: user.googleUser.avatar,
+				fullName: user.googleAccount.fullName,
+				avatar: user.googleAccount.avatar,
 			};
 		}
-		if (user.simpleUser) {
+		if (user.localAccount) {
 			responseData = {
-				fullName: user.simpleUser.fullName,
+				fullName: user.localAccount.fullName,
 			};
 		}
 
@@ -116,26 +110,29 @@ export class AuthService {
 	}
 
 	async verifyNotVerified(req: Request) {
-		const user: UserAuth = await this.validationService.verifyNotVerified(req);
+		const user: UserAccountsIncluded = await this.validationService.verifyNotVerified(req);
 
 		let responseData: { fullName: string };
-		if (user.googleUser) {
+		if (user.googleAccount) {
 			responseData = {
-				fullName: user.googleUser.fullName,
+				fullName: user.googleAccount.fullName,
 			};
 		}
-		if (user.simpleUser) {
+		if (user.localAccount) {
 			responseData = {
-				fullName: user.simpleUser.fullName,
+				fullName: user.localAccount.fullName,
 			};
 		}
 		return responseData;
 	}
 
 	async createUsername(req: Request, usernameData: { username: string }) {
-		const user: UserAuth = await this.validationService.createUsername(req, usernameData);
+		const user: UserAccountsIncluded = await this.validationService.createUsername(
+			req,
+			usernameData,
+		);
 
-		await this.prismaService.userAuthentication.update({
+		await this.prismaService.user.update({
 			where: { id: user.id },
 			data: {
 				username: usernameData.username,
@@ -161,18 +158,18 @@ export class AuthService {
 	async googleLogin(req: Request, res: Response) {
 		this.validationService.googleLogin(req);
 
-		const userPaylod = req.user as GoogleUser;
+		const userPaylod = req.user as GoogleAccount;
 
-		let googleUser = await this.prismaService.googleUser.findFirst({
+		let googleAccount = await this.prismaService.googleAccount.findFirst({
 			where: {
 				googleId: userPaylod.googleId,
 			},
 		});
-		if (googleUser === null) {
-			const userAuth = await this.prismaService.userAuthentication.create({
+		if (googleAccount === null) {
+			const user = await this.prismaService.user.create({
 				data: {
 					verified: true,
-					googleUser: {
+					googleAccount: {
 						create: {
 							googleId: userPaylod.googleId,
 							email: userPaylod.email,
@@ -181,15 +178,15 @@ export class AuthService {
 						},
 					},
 				},
-				include: { googleUser: true },
+				include: { googleAccount: true },
 			});
-			googleUser = userAuth.googleUser;
+			googleAccount = user.googleAccount;
 		}
 		const accessToken = await this.jwtService.signAsync({
-			id: googleUser.id,
+			id: googleAccount.id,
 		});
 		const refreshToken = await this.refreshTokenStrategy.generateRefreshToken({
-			id: googleUser.id,
+			id: googleAccount.id,
 		});
 		res.redirect(`${process.env.FRONTEND_URL}/?at=${accessToken}&rt=${refreshToken}`);
 	}

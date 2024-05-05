@@ -1,6 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { jwtConstants } from './constants/constants';
-import { GoogleUser, User } from './types/user.types';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
@@ -16,9 +15,9 @@ export class RefreshTokenStrategy {
 		return jwt.sign(payload, this.refresh, { expiresIn: this.expireTime });
 	}
 
-	verify(refreshToken: string): User | GoogleUser {
+	verify(refreshToken: string) {
 		try {
-			return jwt.verify(refreshToken, this.refresh) as User | GoogleUser;
+			return jwt.verify(refreshToken, this.refresh);
 		} catch {
 			throw new UnauthorizedException('unauthorized');
 		}

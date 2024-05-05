@@ -2,7 +2,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback, Profile } from 'passport-google-oauth20';
 
 import { Injectable } from '@nestjs/common';
-import { GoogleUser, User } from '../types/user.types';
+import { GoogleAccount } from '@prisma/client';
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 	constructor() {
@@ -20,7 +20,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 		done: VerifyCallback,
 	): Promise<any> {
 		const { emails, photos } = profile;
-		const googleUser: GoogleUser = {
+		const googleAccount: GoogleAccount = {
 			id: profile.id,
 			googleId: profile.id,
 			fullName: profile.displayName,
@@ -28,6 +28,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 			avatar: photos[0].value,
 		};
 
-		done(null, googleUser);
+		done(null, googleAccount);
 	}
 }
