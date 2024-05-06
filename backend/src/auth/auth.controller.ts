@@ -16,22 +16,16 @@ import {
 import { CreateUserDto, LoginUserDto } from './dtos/AuthUser.dto';
 import { AuthService } from './auth.service';
 import { AuthGuardJWT } from './guards/auth.guard';
-import { MailerService } from '@nestjs-modules/mailer';
 import { AuthGuard } from '@nestjs/passport';
-import * as express from 'express';
-import { MailService } from 'src/mail/mail.service';
 
 @Controller('auth')
 export class AuthController {
-	constructor(
-		private authService: AuthService,
-		private mailService: MailService,
-	) {}
+	constructor(private authService: AuthService) {}
 
 	@Post('register')
 	@HttpCode(HttpStatus.CREATED)
 	@UsePipes(ValidationPipe)
-	async regitser(@Body() createUserDto: CreateUserDto): Promise<string> {
+	async register(@Body() createUserDto: CreateUserDto): Promise<string> {
 		return await this.authService.register(createUserDto);
 	}
 
