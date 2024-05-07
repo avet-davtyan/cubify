@@ -18,8 +18,8 @@ import { CreateCubeBodyDto, CreateCubeFilesDto } from './dtos/CreateCube.dto';
 import { CubeService } from './cube.service';
 import { CreateCubeGuard } from './guards/createCube.guard';
 import { AuthGuardJWT } from 'src/auth/guards/auth.guard';
-import { Cube } from './types/cube.types';
 import { InteractionService } from './services/interaction.service';
+import { CubeResponse } from './types/cube.types';
 
 @Controller('cube')
 export class CubeController {
@@ -44,12 +44,12 @@ export class CubeController {
 		@UploadedFiles() createCubeFilesDto: CreateCubeFilesDto,
 		@Body() createCubeBodyDto: CreateCubeBodyDto,
 		@Req() requset: Request,
-	): Promise<Cube> {
+	): Promise<CubeResponse> {
 		return await this.cubeService.createCube(createCubeFilesDto, createCubeBodyDto, requset);
 	}
 
 	@Get('/specific/:id')
-	async findOne(@Param() params: { id: string }): Promise<Cube> {
+	async findOne(@Param() params: { id: string }): Promise<CubeResponse> {
 		return await this.cubeService.findOne(+params.id);
 	}
 
@@ -67,7 +67,7 @@ export class CubeController {
 
 	@UseGuards(AuthGuardJWT)
 	@Get('likedCubes')
-	async getLikedCubes(@Req() req): Promise<Cube[]> {
+	async getLikedCubes(@Req() req): Promise<CubeResponse[]> {
 		return await this.cubeService.getLikedCubes(req);
 	}
 
@@ -91,7 +91,7 @@ export class CubeController {
 	async getCubesWithMostLikes(
 		@Query('page') page: number,
 		@Query('pageSize') pageSize: number,
-	): Promise<Cube[]> {
+	): Promise<CubeResponse[]> {
 		page = Math.floor(page) || 1;
 		pageSize = Math.floor(pageSize) || 2;
 
@@ -102,7 +102,7 @@ export class CubeController {
 	async getCubesMostRecentlyPublished(
 		@Query('page') page: number,
 		@Query('pageSize') pageSize: number,
-	): Promise<Cube[]> {
+	): Promise<CubeResponse[]> {
 		page = Math.floor(page) || 1;
 		pageSize = Math.floor(pageSize) || 9;
 
