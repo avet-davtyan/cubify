@@ -20,6 +20,7 @@ import { CreateCubeGuard } from './guards/createCube.guard';
 import { AuthGuardJWT } from 'src/auth/guards/auth.guard';
 import { InteractionService } from './services/interaction.service';
 import { CubeResponse } from './types/cube.types';
+import { ValidateCubeParamPipe } from './pipes/validate-cube-param/validate-cube-param.pipe';
 
 @Controller('cube')
 export class CubeController {
@@ -49,8 +50,8 @@ export class CubeController {
 	}
 
 	@Get('/specific/:id')
-	async findOne(@Param() params: { id: string }): Promise<CubeResponse> {
-		return await this.cubeService.findOne(+params.id);
+	async findOne(@Param('id', ValidateCubeParamPipe) id: number): Promise<CubeResponse> {
+		return await this.cubeService.findOne(id);
 	}
 
 	@UseGuards(AuthGuardJWT)
@@ -113,12 +114,12 @@ export class CubeController {
 	async getCubesByUser(
 		@Query('page') page: number,
 		@Query('pageSize') pageSize: number,
-		@Param() params: { userId: string },
+		@Param('userId') userId: string,
 	) {
 		page = Math.floor(page) || 1;
 		pageSize = Math.floor(pageSize) || 9;
 
-		return this.cubeService.getCubesByUser(params.userId, page, pageSize);
+		return this.cubeService.getCubesByUser(userId, page, pageSize);
 	}
 
 	@Get('count')
