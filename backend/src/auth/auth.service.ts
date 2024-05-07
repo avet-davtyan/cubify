@@ -70,11 +70,10 @@ export class AuthService {
 		if (user.googleAccount) {
 			responseData = {
 				id: user.id,
-				email: user.googleUser.email,
-				fullName: user.googleUser.fullName,
-				googleId: user.googleUser.googleId,
-				avatar: user.googleUser.avatar,
-				username: user.username,
+				email: user.googleAccount.email,
+				fullName: user.googleAccount.fullName,
+				googleId: user.googleAccount.googleId,
+				avatar: user.googleAccount.avatar,
 			};
 		}
 		if (user.localAccount) {
