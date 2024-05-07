@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCubeBodyDto, CreateCubeFilesDto } from './dtos/CreateCube.dto';
-import { Cube } from './types/cube.types';
+import { CubeResponse } from './types/cube.types';
 import { Request } from 'express';
 import { join, extname } from 'path';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -14,7 +14,7 @@ export class CubeService {
 		createCubeFilesDto: CreateCubeFilesDto,
 		createCubeBodyDto: CreateCubeBodyDto,
 		request: Request,
-	): Promise<Cube> {
+	): Promise<CubeResponse> {
 		const payload = request['payload'] as { id: string };
 
 		for (const image in createCubeFilesDto) {
@@ -79,8 +79,8 @@ export class CubeService {
 		}
 	}
 
-	async findOne(id: number): Promise<Cube> {
-		const cube = await this.prismaService.cube.findFirst({
+	async findOne(id: number): Promise<CubeResponse> {
+		const cube = await this.prismaService.cube.findUnique({
 			where: {
 				id: id,
 				pending: false,
@@ -92,7 +92,7 @@ export class CubeService {
 		return cube;
 	}
 
-	async getCubesWithMostLikes(page: number = 1, pageSize: number = 9): Promise<Cube[]> {
+	async getCubesWithMostLikes(page: number = 1, pageSize: number = 9): Promise<CubeResponse[]> {
 		const cubesWithLikes = await this.prismaService.cube.findMany({
 			take: pageSize,
 			skip: (page - 1) * pageSize,
@@ -111,7 +111,10 @@ export class CubeService {
 		return cubesWithLikes;
 	}
 
-	async getCubesMostRecentlyPublished(page: number = 1, pageSize: number = 9): Promise<Cube[]> {
+	async getCubesMostRecentlyPublished(
+		page: number = 1,
+		pageSize: number = 9,
+	): Promise<CubeResponse[]> {
 		const cubesMostRecentlyPublished = await this.prismaService.cube.findMany({
 			take: pageSize,
 			skip: (page - 1) * pageSize,
@@ -125,7 +128,7 @@ export class CubeService {
 		return cubesMostRecentlyPublished;
 	}
 
-	async getLikedCubes(req: Request): Promise<Cube[]> {
+	async getLikedCubes(req: Request): Promise<CubeResponse[]> {
 		const payload = req['payload'] as { id: string };
 		const cubes = await this.prismaService.like.findMany({
 			where: {
@@ -147,7 +150,11 @@ export class CubeService {
 		return cubeCount;
 	}
 
-	async getCubesByUser(userId: string, page: number = 1, pageSize: number = 9): Promise<Cube[]> {
+	async getCubesByUser(
+		userId: string,
+		page: number = 1,
+		pageSize: number = 9,
+	): Promise<CubeResponse[]> {
 		const cubes = await this.prismaService.cube.findMany({
 			where: {
 				ownerId: userId,

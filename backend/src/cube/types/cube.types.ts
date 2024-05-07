@@ -1,4 +1,4 @@
-export interface Cube {
+export interface CubeResponse {
 	id: number;
 	ownerId: string;
 	name: string;
