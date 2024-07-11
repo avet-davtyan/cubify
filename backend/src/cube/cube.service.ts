@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateCubeBodyDto, CreateCubeFilesDto } from "./dtos/CreateCube.dto";
 import { CubeResponse } from "./types/cube.types";
 import { Request } from "express";
@@ -76,6 +76,39 @@ export class CubeService {
             });
             await fs.rmSync(cubeDir, { recursive: true, force: true });
             throw error;
+        }
+    }
+
+    async deleteOne(id: number) {
+        const cube = await this.prismaService.cube.findUnique({
+            where: {
+                id,
+                pending: false,
+            },
+        });
+        if (cube === null) {
+            throw new NotFoundException("Cube is not found");
+        }
+        const cubeDir = join(process.env.CUBE_IMAGES, cube.id.toString());
+
+        await this.prismaService.$transaction(async (prisma) => {
+            await prisma.like.deleteMany({
+                where: {
+                    cubeId: id,
+                },
+            });
+
+            await prisma.cube.delete({
+                where: {
+                    id,
+                },
+            });
+        });
+
+        try {
+            await fs.rmSync(cubeDir, { recursive: true, force: true });
+        } catch (error) {
+            throw new InternalServerErrorException("The deletion process is incomplete");
         }
     }
 

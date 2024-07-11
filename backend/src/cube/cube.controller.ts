@@ -9,6 +9,7 @@ import {
     Req,
     Param,
     Query,
+    Delete,
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import * as fs from "fs";
@@ -47,6 +48,12 @@ export class CubeController {
         @Req() requset: Request
     ): Promise<CubeResponse> {
         return await this.cubeService.createCube(createCubeFilesDto, createCubeBodyDto, requset);
+    }
+
+    @UseGuards(AuthGuardJWT)
+    @Delete("/specific/:id")
+    async deleteOne(@Param("id", ValidateCubeParamPipe) id: number) {
+        await this.cubeService.deleteOne(id);
     }
 
     @Get("/specific/:id")
