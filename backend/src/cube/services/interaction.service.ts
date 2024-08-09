@@ -4,7 +4,8 @@ import { PrismaService } from "src/prisma/prisma.service";
 @Injectable()
 export class InteractionService {
     constructor(private prismaService: PrismaService) {}
-    async like(req, body: { cubeId: number }) {
+
+    async toggleLike(req, body: { cubeId: number }): Promise<boolean> {
         const payload = req["payload"] as { id: string };
         const existingLike = await this.prismaService.like.findFirst({
             where: {
@@ -13,33 +14,22 @@ export class InteractionService {
             },
         });
         if (existingLike) {
-            throw new HttpException("Like already exists", HttpStatus.CONFLICT);
+            await this.prismaService.like.deleteMany({
+                where: {
+                    userId: payload.id,
+                    cubeId: body.cubeId,
+                },
+            });
+            return false;
+        } else {
+            await this.prismaService.like.create({
+                data: {
+                    userId: payload.id,
+                    cubeId: body.cubeId,
+                },
+            });
+            return true;
         }
-        await this.prismaService.like.create({
-            data: {
-                userId: payload.id,
-                cubeId: body.cubeId,
-            },
-        });
-    }
-
-    async removeLike(req, body: { cubeId: number }) {
-        const payload = req["payload"] as { id: string };
-        const existingLike = await this.prismaService.like.findFirst({
-            where: {
-                userId: payload.id,
-                cubeId: body.cubeId,
-            },
-        });
-        if (existingLike === null) {
-            throw new HttpException("Like does not exist", HttpStatus.CONFLICT);
-        }
-        await this.prismaService.like.deleteMany({
-            where: {
-                userId: payload.id,
-                cubeId: body.cubeId,
-            },
-        });
     }
 
     async getLikes(body: { cubeId: number }) {
