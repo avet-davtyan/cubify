@@ -63,14 +63,8 @@ export class CubeController {
 
     @UseGuards(AuthGuardJWT)
     @Post("like")
-    async like(@Req() req, @Body() body: { cubeId: number }) {
-        return await this.interactionService.like(req, body);
-    }
-
-    @UseGuards(AuthGuardJWT)
-    @Post("removeLike")
-    async removeLike(@Req() req, @Body() body: { cubeId: number }) {
-        return await this.interactionService.removeLike(req, body);
+    async like(@Req() req, @Body() body: { cubeId: number }): Promise<boolean> {
+        return await this.interactionService.toggleLike(req, body);
     }
 
     @UseGuards(AuthGuardJWT)

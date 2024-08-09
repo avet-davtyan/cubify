@@ -11,7 +11,7 @@ async function bootstrap() {
     useContainer(app.select(AppModule), { fallbackOnErrors: true });
     app.enableCors({
         allowedHeaders: "*",
-        origin: process.env.FRONTEND_URL,
+        origin: "*",
         credentials: true,
     });
     app.use(
