@@ -14,6 +14,7 @@ import { RewriteApiEndpointMiddleware } from "./auth/middlewares/redirect.middle
 import { ConfigModule } from "@nestjs/config";
 import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
 import { MailModule } from "./mail/mail.module";
+import cubeImageDir from "cube_image_config";
 
 @Module({
     imports: [
@@ -21,8 +22,8 @@ import { MailModule } from "./mail/mail.module";
         PrismaModule,
         CubeModule,
         ServeStaticModule.forRoot({
-            rootPath: join(__dirname, "..", process.env.CUBE_IMAGES),
-            serveRoot: `/${process.env.CUBE_IMAGES}`,
+            rootPath: join(__dirname, "..", cubeImageDir),
+            serveRoot: `/${cubeImageDir}`,
         }),
         UserModule,
         MailModule,

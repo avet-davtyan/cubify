@@ -5,6 +5,7 @@ import { Request } from "express";
 import { join, extname } from "path";
 import { PrismaService } from "src/prisma/prisma.service";
 import * as fs from "fs";
+import cubeImageDir from "cube_image_config";
 
 @Injectable()
 export class CubeService {
@@ -35,7 +36,7 @@ export class CubeService {
             },
         });
 
-        const cubeDir = join(process.env.CUBE_IMAGES, createdCube.id.toString());
+        const cubeDir = join(cubeImageDir, createdCube.id.toString());
 
         try {
             await fs.mkdirSync(cubeDir, { recursive: true });
@@ -89,7 +90,7 @@ export class CubeService {
         if (cube === null) {
             throw new NotFoundException("Cube is not found");
         }
-        const cubeDir = join(process.env.CUBE_IMAGES, cube.id.toString());
+        const cubeDir = join(cubeImageDir, cube.id.toString());
 
         await this.prismaService.$transaction(async (prisma) => {
             await prisma.like.deleteMany({
