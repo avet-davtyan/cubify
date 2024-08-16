@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../store/AuthStore";
 import { useMediaQuery } from "react-responsive";
 const CreateCube: React.FC = () => {
-    const { setCubeName, sides, cubeName } = useCreateCubeStore();
+    const { setCubeName, sides, cubeName, resetSides, resetPreviewImages } = useCreateCubeStore();
     const navigate = useNavigate();
     const { user } = useAuthStore();
     const [isPosting, setIsPosting] = useState<boolean>(false);
@@ -57,7 +57,7 @@ const CreateCube: React.FC = () => {
                         <Button
                             variant="shadow"
                             color="primary"
-                            disabled={isPosting}
+                            isLoading={isPosting}
                             onPress={async () => {
                                 if (!cubeName) {
                                     toast.error("Please set cube's name", {
@@ -87,6 +87,8 @@ const CreateCube: React.FC = () => {
                                     await api.post("cube/create_cube", formData);
                                     navigate(`/${user?.username}`);
                                     setCubeName(null);
+                                    resetSides();
+                                    resetPreviewImages();
                                 } catch (e) {
                                     const error = e as Error | AxiosError;
                                     if (isAxiosError(error)) {
@@ -116,7 +118,6 @@ const CreateCube: React.FC = () => {
                     style={{
                         height: isMobile ? "50%" : "100%",
                         width: "100%",
-                        borderLeft: "1px solid gray",
                     }}
                 >
                     <Canvas shadows camera={{ position: [90, 90, 90], fov: 1 }}>

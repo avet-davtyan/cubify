@@ -6,6 +6,7 @@ import CubeCard from "./components/CubeCard";
 import { Avatar, Pagination } from "@nextui-org/react";
 import { GeneralUser } from "../../types/AuthTypes";
 import useAuthStore from "../../store/AuthStore";
+import SquareLoader from "react-spinners/SquareLoader";
 
 const UserPage: React.FC = () => {
     const { username } = useParams();
@@ -14,6 +15,7 @@ const UserPage: React.FC = () => {
     const [errorText, setErrorText] = useState<string | null>(null);
     const [cubes, setCubes] = useState<null | Cube[]>(null);
     const [cubeCount, setCubeCount] = useState<null | number>(null);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page");
@@ -51,13 +53,15 @@ const UserPage: React.FC = () => {
             setCubes(fetchedCubes);
         } catch {
             setErrorText(`This page isn't available`);
+        } finally {
+            setLoading(false);
         }
     };
 
     useEffect(() => {
         fetch();
     }, []);
-    return (
+    return !loading ? (
         <>
             {errorText && (
                 <div
@@ -100,7 +104,11 @@ const UserPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {cubeCount !== null && cubeCount !== 0 && <p>{cubeCount} Cubes</p>}
+                        {cubeCount !== null && cubeCount !== 0 && (
+                            <p>
+                                {cubeCount} {cubeCount == 1 ? "Cube" : "Cubes"}
+                            </p>
+                        )}
                     </div>
                     {cubeCount !== 0 ? (
                         <div>
@@ -150,6 +158,10 @@ const UserPage: React.FC = () => {
                 </div>
             )}
         </>
+    ) : (
+        <div className="w-full h-full flex justify-center items-center">
+            <SquareLoader color="white" />
+        </div>
     );
 };
 export default UserPage;

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useMediaQuery } from "react-responsive";
 import { Flip, toast } from "react-toastify";
 import { AxiosError, isAxiosError } from "axios";
+import PuffLoader from "react-spinners/PuffLoader";
 
 const CubeCard = ({ cube }: { cube: Cube }) => {
     const [liked, setLiked] = useState<boolean | null>(null);
@@ -17,11 +18,16 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
     const { isAuth } = useAuthStore();
     const [hover, setHover] = useState<boolean>(false);
     const isMobile = useMediaQuery({ query: "(max-width: 1224px)" });
+    const [likePosting, setLikePosting] = useState<boolean>(false);
 
     const likeHandler = async () => {
         try {
-            const response = await api.post("cube/like", { cubeId: cube.id });
-            console.log(response);
+            setLikePosting(true);
+            const liked = (await api.post("cube/like", { cubeId: cube.id })).data;
+            setLiked(liked);
+            setLikeCount((prevState) =>
+                prevState !== null ? (liked === true ? prevState + 1 : prevState - 1) : prevState
+            );
         } catch (e) {
             const error = e as Error | AxiosError;
             if (isAxiosError(error)) {
@@ -37,6 +43,8 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
                     transition: Flip,
                 });
             }
+        } finally {
+            setLikePosting(false);
         }
     };
 
@@ -147,14 +155,20 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
                         </Skeleton>
                         {isAuth && (
                             <Skeleton isLoaded={liked !== null}>
-                                <button
-                                    style={{
-                                        padding: "10px",
-                                    }}
-                                    onClick={likeHandler}
-                                >
-                                    {liked ? <LikeFilled /> : <LikeOutlined />}
-                                </button>
+                                <div className="relative">
+                                    <button
+                                        className={`absolute z-10 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] ${
+                                            likePosting && "opacity-0"
+                                        }`}
+                                        onClick={likeHandler}
+                                    >
+                                        {liked ? <LikeFilled /> : <LikeOutlined />}
+                                    </button>
+                                    <PuffLoader
+                                        color="white"
+                                        className={`${likePosting ? "opacity-100" : "opacity-0"}`}
+                                    />
+                                </div>
                             </Skeleton>
                         )}
                     </div>

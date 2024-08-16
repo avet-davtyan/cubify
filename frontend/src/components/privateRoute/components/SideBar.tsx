@@ -40,11 +40,12 @@ const SideBar = ({
                 flexDirection: "column",
                 padding: "40px",
                 gap: "40px",
+                overflow: "hidden",
             }}
         >
             {isAuth
                 ? isMobile && (
-                      <a onClick={() => navigate(`/${user?.username}`)}>
+                      <a onClick={() => navigateAndClose(`/${user?.username}`)}>
                           <div className="flex items-center gap-3">
                               <p
                                   style={{

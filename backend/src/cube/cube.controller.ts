@@ -46,7 +46,7 @@ export class CubeController {
         @UploadedFiles() createCubeFilesDto: CreateCubeFilesDto,
         @Body() createCubeBodyDto: CreateCubeBodyDto,
         @Req() requset: Request
-    ): Promise<CubeResponse> {
+    ) {
         return await this.cubeService.createCube(createCubeFilesDto, createCubeBodyDto, requset);
     }
 

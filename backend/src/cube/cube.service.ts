@@ -5,17 +5,16 @@ import { Request } from "express";
 import { join, extname } from "path";
 import { PrismaService } from "src/prisma/prisma.service";
 import * as fs from "fs";
-import cubeImageDir from "cube_image_config";
+import { S3Service } from "./services/s3.service";
 
 @Injectable()
 export class CubeService {
-    constructor(private prismaService: PrismaService) {}
+    constructor(
+        private prismaService: PrismaService,
+        private s3Service: S3Service
+    ) {}
 
-    async createCube(
-        createCubeFilesDto: CreateCubeFilesDto,
-        createCubeBodyDto: CreateCubeBodyDto,
-        request: Request
-    ): Promise<CubeResponse> {
+    async createCube(createCubeFilesDto: CreateCubeFilesDto, createCubeBodyDto: CreateCubeBodyDto, request: Request) {
         const payload = request["payload"] as { id: string };
 
         for (const image in createCubeFilesDto) {
@@ -36,24 +35,29 @@ export class CubeService {
             },
         });
 
-        const cubeDir = join(cubeImageDir, createdCube.id.toString());
+        const cubeId = createdCube.id.toString();
+
+        const cubeDir = join(process.env.CUBE_IMAGES, createdCube.id.toString());
 
         try {
-            await fs.mkdirSync(cubeDir, { recursive: true });
+            // await fs.mkdirSync(cubeDir, { recursive: true });
 
             for (const image in createCubeFilesDto) {
-                const imageDir = image + ".jpg";
-                const imagePath = join(cubeDir, imageDir);
-                const imagePathDb = join(createdCube.id.toString(), imageDir);
+                const fileName = `${cubeId}_${image}.jpg`;
+                const objectUrl = await this.s3Service.putObject(createCubeFilesDto[image][0], fileName);
 
-                await fs.writeFileSync(imagePath, createCubeFilesDto[image][0].buffer);
+                // const imageDir = image + ".jpg";
+                // const imagePath = join(cubeDir, imageDir);
+                // const imagePathDb = join(createdCube.id.toString(), imageDir);
+
+                // await fs.writeFileSync(imagePath, createCubeFilesDto[image][0].buffer);
 
                 await this.prismaService.cube.update({
                     where: {
                         id: createdCube.id,
                     },
                     data: {
-                        [this.sideImageMap[image]]: imagePathDb,
+                        [this.sideImageMap[image]]: objectUrl,
                     },
                 });
             }
@@ -69,14 +73,6 @@ export class CubeService {
             return cube;
         } catch (error) {
             console.error("Error creating cube with images:", error);
-
-            await this.prismaService.cube.delete({
-                where: {
-                    id: createdCube.id,
-                },
-            });
-            await fs.rmSync(cubeDir, { recursive: true, force: true });
-            throw error;
         }
     }
 
@@ -90,7 +86,19 @@ export class CubeService {
         if (cube === null) {
             throw new NotFoundException("Cube is not found");
         }
-        const cubeDir = join(cubeImageDir, cube.id.toString());
+
+        try {
+            for (const image of Object.keys(this.sideImageMap)) {
+                const imageUrl = cube[this.sideImageMap[image]];
+
+                if (imageUrl) {
+                    const fileName = imageUrl.split("/").pop();
+                    await this.s3Service.deleteObject(fileName);
+                }
+            }
+        } catch (error) {
+            console.error(error);
+        }
 
         await this.prismaService.$transaction(async (prisma) => {
             await prisma.like.deleteMany({
@@ -105,12 +113,6 @@ export class CubeService {
                 },
             });
         });
-
-        try {
-            await fs.rmSync(cubeDir, { recursive: true, force: true });
-        } catch (error) {
-            throw new InternalServerErrorException("The deletion process is incomplete");
-        }
     }
 
     async findOne(id: number): Promise<CubeResponse> {

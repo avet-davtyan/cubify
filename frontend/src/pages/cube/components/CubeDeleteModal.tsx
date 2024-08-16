@@ -43,7 +43,7 @@ const DeleteModal = ({ cube }: { cube: Cube }) => {
         <Modal
             isOpen={isOpen}
             onClose={() => {
-                setIsOpen(false);
+                !deleteLoading && setIsOpen(false);
             }}
         >
             <ModalContent>
@@ -60,13 +60,7 @@ const DeleteModal = ({ cube }: { cube: Cube }) => {
                             <Button color="primary" onPress={onClose}>
                                 Close
                             </Button>
-                            <Button
-                                color="danger"
-                                variant="bordered"
-                                onPress={onClose}
-                                isLoading={deleteLoading}
-                                onClick={deleteTheCube}
-                            >
+                            <Button color="danger" variant="bordered" isLoading={deleteLoading} onClick={deleteTheCube}>
                                 Delete
                             </Button>
                         </ModalFooter>

@@ -17,24 +17,12 @@ import { MailModule } from "./mail/mail.module";
 import cubeImageDir from "cube_image_config";
 
 @Module({
-    imports: [
-        AuthModule,
-        PrismaModule,
-        CubeModule,
-        ServeStaticModule.forRoot({
-            rootPath: join(__dirname, "..", cubeImageDir),
-            serveRoot: `/${cubeImageDir}`,
-        }),
-        UserModule,
-        MailModule,
-    ],
+    imports: [AuthModule, PrismaModule, CubeModule, UserModule, MailModule],
     controllers: [AppController],
     providers: [UserService],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(RewriteApiEndpointMiddleware) // Apply your custom middleware
-            .forRoutes("/");
+        consumer.apply(RewriteApiEndpointMiddleware).forRoutes("/");
     }
 }

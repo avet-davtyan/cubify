@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { LoginData } from "../../../types/AuthTypes";
 import { Button, Card, Image, Input, Link } from "@nextui-org/react";
+import { Link as LinkRouter } from "react-router-dom";
 import { EyeFilled, EyeInvisibleFilled, GoogleOutlined } from "@ant-design/icons";
 import { Formik } from "formik";
 import useAuthStore from "../../../store/AuthStore";
@@ -34,12 +35,12 @@ const SignInForm: React.FC = () => {
     };
 
     const onSubmit = async (values: LoginData, { resetForm }: { resetForm: () => void }) => {
-        console.log("s");
         try {
             setSignInLoading(true);
 
             await authStore.login(values.emailOrUsername, values.password);
-            navigate("/");
+            navigate("/cubes");
+
             resetForm();
         } catch (e) {
             const error = e as Error | AxiosError;
@@ -70,7 +71,7 @@ const SignInForm: React.FC = () => {
             <div className="w-full flex justify-center">
                 <p className="text-2xl">Welcome back</p>
             </div>
-            <Image src={cubeLogo} width={40} className="m-3 rounded-none" />
+            <Image src={cubeLogo} width={40} className="my-8 rounded-none" />
             <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                     <form onSubmit={handleSubmit} className="w-full">
@@ -115,9 +116,9 @@ const SignInForm: React.FC = () => {
                             />
                             <div className="w-full flex justify-center items-center flex-col">
                                 <p className="opacity-50 text-sm">Don't have an account?</p>
-                                <Link href="/register" underline="hover">
-                                    <p className="text-sm">Sign Up</p>
-                                </Link>
+                                <LinkRouter to="/register">
+                                    <p className="text-sm text-blue-400">Sign Up</p>
+                                </LinkRouter>
                             </div>
 
                             <Button

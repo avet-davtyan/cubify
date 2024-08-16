@@ -19,10 +19,12 @@ function PrivateRoute() {
         const fetch = async () => {
             try {
                 const accessToken: string | null = searchParams.get("at");
+                let redirecting = false;
                 const refreshToken: string | null = searchParams.get("rt");
                 if (accessToken && refreshToken) {
                     localStorage.setItem("at", accessToken);
                     localStorage.setItem("rt", refreshToken);
+                    redirecting = true;
                 }
                 searchParams.delete("at");
                 searchParams.delete("rt");
@@ -31,6 +33,8 @@ function PrivateRoute() {
 
                 await cubeStore.getCubeCount();
                 await authStore.verify();
+
+                redirecting && navigate("cubes");
             } catch (e) {
                 const error = e as Error | AxiosError;
                 if (isAxiosError(error)) {

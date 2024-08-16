@@ -24,8 +24,7 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
                     username: value,
                 },
             });
-
-            if (user && !user.verified) {
+            if (user && !user?.verified) {
                 await this.prismaService.user.delete({
                     where: {
                         id: user.id,
@@ -48,17 +47,20 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
                 },
             });
 
-            if (user && !user.userAuth.verified) {
-                await this.prismaService.user.delete({
-                    where: {
-                        id: user.id,
-                    },
-                });
-                await this.prismaService.user.delete({
-                    where: {
-                        id: user.id,
-                    },
-                });
+            if (user && !user?.userAuth?.verified) {
+                await this.prismaService.$transaction([
+                    this.prismaService.localAccount.delete({
+                        where: {
+                            id: user.id,
+                        },
+                    }),
+                    this.prismaService.user.delete({
+                        where: {
+                            id: user.id,
+                        },
+                    }),
+                ]);
+
                 user = null;
             }
         }

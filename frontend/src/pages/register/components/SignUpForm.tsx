@@ -1,7 +1,8 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { RegistraionData } from "../../../types/AuthTypes";
 import AuthService from "../../../services/AuthService";
-import { Button, Card, Image, Input, Link } from "@nextui-org/react";
+import { Button, Card, Image, Input } from "@nextui-org/react";
+import { Link } from "react-router-dom";
 import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import { Formik } from "formik";
 import { useMediaQuery } from "react-responsive";
@@ -92,7 +93,7 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
                 <p className="text-2xl">Create an account</p>
             </div>
 
-            <Image src={cubeLogo} width={40} className="m-8 rounded-none" />
+            <Image src={cubeLogo} width={40} className="my-8 rounded-none" />
             <Formik initialValues={initialValues} validate={validate} onSubmit={onSubmit}>
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
                     <form onSubmit={handleSubmit} className="w-full">
@@ -191,8 +192,8 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
 
                             <div className="w-full flex justify-center items-center flex-col">
                                 <p className="opacity-50 text-sm">Already have an account?</p>
-                                <Link href="/login" underline="hover">
-                                    <p className="text-sm">Sign In</p>
+                                <Link to="/login">
+                                    <p className="text-sm text-blue-400">Sign In</p>
                                 </Link>
                             </div>
                             <Button

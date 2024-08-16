@@ -1,3 +1,5 @@
+import { Express } from "express";
+
 export class CreateCubeBodyDto {
     name: string;
     description?: string;
@@ -5,10 +7,10 @@ export class CreateCubeBodyDto {
 }
 
 export class CreateCubeFilesDto {
-    image1: [File];
-    image2: [File];
-    image3: [File];
-    image4: [File];
-    image5: [File];
-    image6: [File];
+    image1: Express.Multer.File[];
+    image2: Express.Multer.File[];
+    image3: Express.Multer.File[];
+    image4: Express.Multer.File[];
+    image5: Express.Multer.File[];
+    image6: Express.Multer.File[];
 }

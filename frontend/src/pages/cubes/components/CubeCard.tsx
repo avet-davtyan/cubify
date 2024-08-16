@@ -179,23 +179,24 @@ const CubeCard = ({ cube }: { cube: Cube }) => {
                         }}
                     >
                         <Skeleton isLoaded={likeCount !== null} className="rounded-lg">
-                            <p
-                                style={{
-                                    opacity: "0.4",
-                                }}
-                            >
-                                {likeCount} likes
-                            </p>
+                            <p className="opacity-40 px-4">{likeCount} likes</p>
                         </Skeleton>
                         {isAuth && (
                             <Skeleton isLoaded={liked !== null} className="rounded-lg">
-                                {likePosting ? (
-                                    <PuffLoader color="white" />
-                                ) : (
-                                    <button className="p-3" disabled={likePosting} onClick={likeHandler}>
+                                <div className="relative">
+                                    <button
+                                        className={`absolute z-10 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] ${
+                                            likePosting && "opacity-0"
+                                        }`}
+                                        onClick={likeHandler}
+                                    >
                                         {liked ? <LikeFilled /> : <LikeOutlined />}
                                     </button>
-                                )}
+                                    <PuffLoader
+                                        color="white"
+                                        className={`${likePosting ? "opacity-100" : "opacity-0"}`}
+                                    />
+                                </div>
                             </Skeleton>
                         )}
                     </div>

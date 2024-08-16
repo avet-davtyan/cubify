@@ -25,7 +25,6 @@ const useAuthStore = create<AuthState>((set) => ({
             const response = await AuthService.login(emailOrUsername, password);
             localStorage.setItem("at", response.data.accessToken);
             localStorage.setItem("rt", response.data.refreshToken);
-            console.log(response.data.accessToken);
             set(() => ({ isAuth: true }));
         } catch (e: any) {
             throw e;
@@ -57,7 +56,6 @@ const useAuthStore = create<AuthState>((set) => ({
     verify: async () => {
         const response = await AuthService.verify();
         const user = response.data as GeneralUser;
-        console.log(user);
         set(() => ({ isAuth: true, user: user }));
     },
 }));

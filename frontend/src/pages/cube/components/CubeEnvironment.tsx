@@ -13,6 +13,7 @@ import useAuthStore from "../../../store/AuthStore";
 import { DeleteFilled, LikeFilled, LikeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import useDeleteModalStore from "../../../store/DeleteModalStore";
+import axios from "axios";
 
 const CubeEnvironment = ({
     cube,
@@ -72,8 +73,8 @@ const CubeEnvironment = ({
 
         if (cube.side1) {
             promises.push(
-                api
-                    .get<Blob>("cube_images/" + cube.side1, { responseType: "blob" })
+                axios
+                    .get<Blob>(cube.side1, { responseType: "blob" })
                     .then((response: AxiosResponse<Blob>) => {
                         setSide1(URL.createObjectURL(response.data));
                     })
@@ -83,8 +84,8 @@ const CubeEnvironment = ({
 
         if (cube.side2) {
             promises.push(
-                api
-                    .get<Blob>("cube_images/" + cube.side2, { responseType: "blob" })
+                axios
+                    .get<Blob>(cube.side2, { responseType: "blob" })
                     .then((response: AxiosResponse<Blob>) => {
                         setSide2(URL.createObjectURL(response.data));
                     })
@@ -93,8 +94,8 @@ const CubeEnvironment = ({
         }
         if (cube.side3) {
             promises.push(
-                api
-                    .get<Blob>("cube_images/" + cube.side3, { responseType: "blob" })
+                axios
+                    .get<Blob>(cube.side3, { responseType: "blob" })
                     .then((response: AxiosResponse<Blob>) => {
                         setSide3(URL.createObjectURL(response.data));
                     })
@@ -103,8 +104,8 @@ const CubeEnvironment = ({
         }
         if (cube.side4) {
             promises.push(
-                api
-                    .get<Blob>("cube_images/" + cube.side4, { responseType: "blob" })
+                axios
+                    .get<Blob>(cube.side4, { responseType: "blob" })
                     .then((response: AxiosResponse<Blob>) => {
                         setSide4(URL.createObjectURL(response.data));
                     })
@@ -113,8 +114,8 @@ const CubeEnvironment = ({
         }
         if (cube.side5) {
             promises.push(
-                api
-                    .get<Blob>("cube_images/" + cube.side5, { responseType: "blob" })
+                axios
+                    .get<Blob>(cube.side5, { responseType: "blob" })
                     .then((response: AxiosResponse<Blob>) => {
                         setSide5(URL.createObjectURL(response.data));
                     })
@@ -123,8 +124,8 @@ const CubeEnvironment = ({
         }
         if (cube.side6) {
             promises.push(
-                api
-                    .get<Blob>("cube_images/" + cube.side6, { responseType: "blob" })
+                axios
+                    .get<Blob>(cube.side6, { responseType: "blob" })
                     .then((response: AxiosResponse<Blob>) => {
                         setSide6(URL.createObjectURL(response.data));
                     })

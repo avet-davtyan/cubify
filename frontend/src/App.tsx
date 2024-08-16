@@ -23,7 +23,7 @@ function App() {
     return (
         <NextUIProvider>
             <NextThemesProvider attribute="class" defaultTheme={darkMode ? "dark" : "light"}>
-                <BrowserRouter>
+                <BrowserRouter basename="/cubify">
                     <Routes>
                         <Route path="/" element={<PrivateRoute />}>
                             <Route index element={<Dashboard />} />

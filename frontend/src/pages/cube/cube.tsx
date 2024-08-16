@@ -4,15 +4,15 @@ import { useEffect, useState } from "react";
 import { Cube } from "../../types/CubeTypes";
 import CubeCanvas from "./components/CubeCanvas";
 import DeleteModal from "./components/CubeDeleteModal";
+import SquareLoader from "react-spinners/SquareLoader";
 
 const CubePage: React.FC = () => {
     const { cubeId } = useParams();
     const [cube, SetCube] = useState<Cube | null>(null);
-    const [, setCubeLoaded] = useState<boolean>(false);
+    const [cubeLoaded, setCubeLoaded] = useState<boolean>(false);
 
     const fetch = async () => {
         try {
-            console.log("here");
             const cubeData = (await api.get(`cube/specific/${cubeId}/`)).data;
             SetCube(cubeData);
         } catch {
@@ -32,11 +32,15 @@ const CubePage: React.FC = () => {
                         width: "100%",
                     }}
                 >
-                    {cube && (
+                    {cube ? (
                         <>
                             <CubeCanvas cube={cube} setCubeLoaded={setCubeLoaded} />
                             <DeleteModal cube={cube} />
                         </>
+                    ) : (
+                        <div className="w-full h-full flex justify-center items-center">
+                            <SquareLoader color="white" />
+                        </div>
                     )}
                 </div>
             </div>

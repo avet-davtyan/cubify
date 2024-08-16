@@ -33,7 +33,7 @@ export class ValidationService {
                     email: loginUserDto.emailOrUsername,
                 },
             });
-            if (user === null) {
+            if (localAccount === null) {
                 throw new NotFoundException("Wrong username or email");
             }
         } else {
