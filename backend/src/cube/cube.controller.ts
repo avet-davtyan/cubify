@@ -12,12 +12,9 @@ import {
     Delete,
 } from "@nestjs/common";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
-import * as fs from "fs";
-import { join } from "path";
 import { Request } from "express";
 import { CreateCubeBodyDto, CreateCubeFilesDto } from "./dtos/CreateCube.dto";
 import { CubeService } from "./cube.service";
-import { CreateCubeGuard } from "./guards/createCube.guard";
 import { AuthGuardJWT } from "src/auth/guards/auth.guard";
 import { InteractionService } from "./services/interaction.service";
 import { CubeResponse } from "./types/cube.types";

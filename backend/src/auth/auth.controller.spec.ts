@@ -2,13 +2,9 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { AuthController } from "./auth.controller";
 import { AuthService } from "./auth.service";
-import { MailService } from "src/mail/mail.service";
 import { CreateUserDto, LoginUserDto } from "./dtos/AuthUser.dto";
 import { JwtService } from "@nestjs/jwt";
-import { LocalAccount } from "@prisma/client";
 import { GoogleAccountResponse, LocalAccoutResponse } from "./types/user.types";
-import { verify } from "crypto";
-
 describe("AuthController", () => {
     let controller: AuthController;
 
