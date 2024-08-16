@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://postgres:admin@db:5432/cubify"
+  url      = "postgresql://postgres:0b78c664efce@cubify-db.chk60ggsgegs.eu-north-1.rds.amazonaws.com:5432/cubify_db"
 }
 
 model LocalAccount {

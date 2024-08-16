@@ -25,16 +25,29 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
                 },
             });
             if (user && !user?.verified) {
-                await this.prismaService.user.delete({
-                    where: {
-                        id: user.id,
-                    },
+                await this.prismaService.$transaction(async (prisma) => {
+                    await prisma.localAccount.delete({
+                        where: {
+                            id: user.id,
+                        },
+                    });
+
+                    await prisma.user.delete({
+                        where: {
+                            id: user.id,
+                        },
+                    });
                 });
-                await this.prismaService.user.delete({
-                    where: {
-                        id: user.id,
-                    },
-                });
+                // await this.prismaService.user.delete({
+                //     where: {
+                //         id: user.id,
+                //     },
+                // });
+                // await this.prismaService.user.delete({
+                //     where: {
+                //         id: user.id,
+                //     },
+                // });
                 user = null;
             }
         } else if (type === "email") {

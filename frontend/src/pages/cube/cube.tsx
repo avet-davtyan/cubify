@@ -9,7 +9,7 @@ import SquareLoader from "react-spinners/SquareLoader";
 const CubePage: React.FC = () => {
     const { cubeId } = useParams();
     const [cube, SetCube] = useState<Cube | null>(null);
-    const [cubeLoaded, setCubeLoaded] = useState<boolean>(false);
+    const [, setCubeLoaded] = useState<boolean>(false);
 
     const fetch = async () => {
         try {

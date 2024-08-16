@@ -4,7 +4,6 @@ import { Mesh, Texture } from "three";
 import { AxiosResponse } from "axios";
 import { Dispatch, useEffect, useRef, useState } from "react";
 import defaultTexture from "../../../../assets/white.webp";
-import api from "../../../../http/base_api";
 import axios from "axios";
 import { useFrame } from "@react-three/fiber";
 
