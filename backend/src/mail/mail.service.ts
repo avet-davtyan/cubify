@@ -56,6 +56,7 @@ export class MailService {
             subject: "Verify your email",
             template: "verification",
             context: {
+                backendUrl: process.env.VITE_BACKEND_URL,
                 fullName: user.localAccount.fullName,
                 verificationToken: user.verificationToken,
             },
