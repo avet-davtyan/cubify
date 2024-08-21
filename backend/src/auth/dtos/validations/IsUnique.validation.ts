@@ -8,6 +8,7 @@ import {
     ValidationOptions,
     registerDecorator,
 } from "class-validator";
+import { LocalAccount, User } from "@prisma/client";
 
 @ValidatorConstraint({ name: "emailOrUsername", async: true })
 @Injectable()
@@ -16,42 +17,40 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
 
     async validate(value: string, args: ValidationArguments): Promise<boolean> {
         const { type }: { type: "username" | "email" } = args.constraints[0];
-        let user;
+        let user: User | null;
         if (type === "username") {
-            console.log(value);
             user = await this.prismaService.user.findFirst({
                 where: {
                     username: value,
                 },
             });
-            if (user && !user?.verified) {
+            if (user && !user.verified) {
                 await this.prismaService.$transaction(async (prisma) => {
+                    await prisma.like.deleteMany({
+                        where: {
+                            userId: user.id,
+                        },
+                    });
+                    await prisma.cube.deleteMany({
+                        where: {
+                            ownerId: user.id,
+                        },
+                    });
                     await prisma.localAccount.delete({
                         where: {
                             id: user.id,
                         },
                     });
-
                     await prisma.user.delete({
                         where: {
                             id: user.id,
                         },
                     });
                 });
-                // await this.prismaService.user.delete({
-                //     where: {
-                //         id: user.id,
-                //     },
-                // });
-                // await this.prismaService.user.delete({
-                //     where: {
-                //         id: user.id,
-                //     },
-                // });
                 user = null;
             }
         } else if (type === "email") {
-            user = await this.prismaService.localAccount.findFirst({
+            const localAccount = await this.prismaService.localAccount.findFirst({
                 where: {
                     email: value,
                 },
@@ -59,21 +58,31 @@ export class IsUniqueValidation implements ValidatorConstraintInterface {
                     user: true,
                 },
             });
+            user = localAccount?.user;
 
-            if (user && !user?.userAuth?.verified) {
-                await this.prismaService.$transaction([
-                    this.prismaService.localAccount.delete({
+            if (user && !user.verified) {
+                await this.prismaService.$transaction(async (prisma) => {
+                    await prisma.like.deleteMany({
+                        where: {
+                            userId: user.id,
+                        },
+                    });
+                    await prisma.cube.deleteMany({
+                        where: {
+                            ownerId: user.id,
+                        },
+                    });
+                    await prisma.localAccount.delete({
                         where: {
                             id: user.id,
                         },
-                    }),
-                    this.prismaService.user.delete({
+                    });
+                    await prisma.user.delete({
                         where: {
                             id: user.id,
                         },
-                    }),
-                ]);
-
+                    });
+                });
                 user = null;
             }
         }

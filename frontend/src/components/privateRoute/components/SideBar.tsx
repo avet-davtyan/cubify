@@ -13,7 +13,7 @@ const SideBar = ({
     setSideBarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
     const pathName = location.pathname;
-    const { isAuth } = useAuthStore();
+    const { isAuth, reset } = useAuthStore();
     const navigate = useNavigate();
     const { user } = useAuthStore();
     const isMobile = useMediaQuery({ query: "(max-width: 1224px)" });
@@ -25,6 +25,12 @@ const SideBar = ({
     const closeSideBar = () => {
         setSideBarOpen(false);
     };
+
+    const logout = () => {
+        reset();
+        navigate("/login");
+    };
+
     return (
         <div
             style={{
@@ -124,18 +130,21 @@ const SideBar = ({
                 </div>
             </p>
             {isAuth && (
-                <p
-                    style={{
-                        cursor: "pointer",
-                        opacity: pathName == "/create_cube" ? "0.5" : "1",
-                        borderBottom: pathName == "/create_cube" ? "1px solid" : "",
-                    }}
-                    onClick={() => {
-                        navigateAndClose("/create_cube");
-                    }}
-                >
-                    Create a cube
-                </p>
+                <>
+                    <p
+                        style={{
+                            cursor: "pointer",
+                            opacity: pathName == "/create_cube" ? "0.5" : "1",
+                            borderBottom: pathName == "/create_cube" ? "1px solid" : "",
+                        }}
+                        onClick={() => {
+                            navigateAndClose("/create_cube");
+                        }}
+                    >
+                        Create a cube
+                    </p>
+                    <p onClick={() => logout()}>Logout</p>
+                </>
             )}
             <div className="absolute right-5 top-5 cursor-pointer" onClick={closeSideBar}>
                 <img src={CloseSideBar} width={20} />

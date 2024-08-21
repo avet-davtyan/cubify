@@ -9,12 +9,12 @@ const Dashboard: React.FC = () => {
     const { isAuth } = useAuthStore();
     const isMobile = useMediaQuery({ query: "(max-width: 1224px)" });
 
-    const redirectIfAuth = () => {
-        isAuth && navigate("/cubes");
+    const redirectToCubes = () => {
+        navigate("/cubes");
     };
 
     useEffect(() => {
-        redirectIfAuth();
+        redirectToCubes();
     }, []);
 
     return (

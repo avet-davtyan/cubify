@@ -9,7 +9,7 @@ import SquareLoader from "react-spinners/SquareLoader";
 
 const Cubes = () => {
     const [cubes, setCubes] = useState<null | Cube[]>(null);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
     const cubeStore = useCubeStore();
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page");

@@ -10,6 +10,7 @@ interface AuthState {
     setLoading: (bool: boolean) => void;
     login: (emailOrUsername: string, password: string) => void;
     verify: () => void;
+    reset: () => void;
 }
 
 const useAuthStore = create<AuthState>((set) => ({
@@ -29,6 +30,10 @@ const useAuthStore = create<AuthState>((set) => ({
         } catch (e: any) {
             throw e;
         }
+    },
+    reset: () => {
+        localStorage.clear();
+        set(() => ({ isAuth: false, user: null, isLoading: true }));
     },
 
     // logout: async () => {

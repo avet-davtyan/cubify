@@ -7,6 +7,8 @@ import { EyeFilled, EyeInvisibleFilled } from "@ant-design/icons";
 import { Formik } from "formik";
 import { useMediaQuery } from "react-responsive";
 import cubeLogo from "../../../assets/cubeLogo.svg";
+import { AxiosError, isAxiosError } from "axios";
+import { Flip, toast } from "react-toastify";
 interface SignUpProps {
     setIsOpen: Dispatch<SetStateAction<boolean>>;
     setIsOpenError: Dispatch<SetStateAction<boolean>>;
@@ -72,9 +74,21 @@ const SignUpForm: React.FC<SignUpProps> = ({ setIsOpen, setIsOpenError }: SignUp
             });
             setIsOpen(true);
             resetForm();
-        } catch (error: any) {
-            console.log(error);
-            setIsOpenError(true);
+        } catch (e) {
+            const error = e as Error | AxiosError;
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message, {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    transition: Flip,
+                });
+            }
         } finally {
             setSignUpLoading(false);
         }

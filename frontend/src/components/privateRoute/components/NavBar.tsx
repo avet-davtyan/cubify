@@ -1,4 +1,13 @@
-import { Avatar, Button, Navbar, Image } from "@nextui-org/react";
+import {
+    Avatar,
+    Button,
+    Navbar,
+    Image,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
+} from "@nextui-org/react";
 import useAuthStore from "../../../store/AuthStore";
 
 import { useNavigate } from "react-router-dom";
@@ -8,12 +17,17 @@ import cubeLogo from "../../../assets/cubeLogo.svg";
 import { SearchOutlined } from "@ant-design/icons";
 
 const NavBar = ({ setSideBarOpen }: { setSideBarOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
-    const { user, isAuth } = useAuthStore();
+    const { user, isAuth, reset } = useAuthStore();
     const navigate = useNavigate();
     const pathName = location.pathname;
     const isMobile = useMediaQuery({ query: "(max-width: 1224px)" });
     const openSideBar = () => {
         setSideBarOpen(true);
+    };
+
+    const logout = () => {
+        reset();
+        navigate("/login");
     };
 
     return (
@@ -128,7 +142,32 @@ const NavBar = ({ setSideBarOpen }: { setSideBarOpen: React.Dispatch<React.SetSt
                                       >
                                           {user?.fullName}
                                       </p>
-                                      <Avatar src={user?.avatar} />
+                                      <Dropdown placement="bottom-end">
+                                          <DropdownTrigger>
+                                              <Avatar
+                                                  src={user?.avatar}
+                                                  isBordered
+                                                  as="button"
+                                                  className="transition-transform"
+                                                  size="md"
+                                              />
+                                          </DropdownTrigger>
+                                          <DropdownMenu aria-label="Profile Actions" variant="flat">
+                                              <DropdownItem key="profile" className="h-14 gap-2">
+                                                  <p className="font-semibold">Signed in as</p>
+                                                  <p className="font-semibold">{user?.username}</p>
+                                              </DropdownItem>
+                                              <DropdownItem
+                                                  key="logout"
+                                                  color="danger"
+                                                  onClick={() => {
+                                                      logout();
+                                                  }}
+                                              >
+                                                  Log Out
+                                              </DropdownItem>
+                                          </DropdownMenu>
+                                      </Dropdown>
                                   </div>
                               </a>
                           )

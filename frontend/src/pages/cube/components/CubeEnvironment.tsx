@@ -1,7 +1,7 @@
 import { OrbitControls, Environment, useTexture, Html } from "@react-three/drei";
 import { Cube } from "../../../types/CubeTypes";
 import { Mesh, Texture } from "three";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse, isAxiosError } from "axios";
 import { Dispatch, useEffect, useRef, useState } from "react";
 import defaultTexture from "../../../assets/cubifyAv.png";
 import api from "../../../http/base_api";
@@ -14,6 +14,8 @@ import { DeleteFilled, LikeFilled, LikeOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import useDeleteModalStore from "../../../store/DeleteModalStore";
 import axios from "axios";
+import { Flip, toast } from "react-toastify";
+import PuffLoader from "react-spinners/PuffLoader";
 
 const CubeEnvironment = ({
     cube,
@@ -44,28 +46,40 @@ const CubeEnvironment = ({
     const { isOpen, setIsOpen } = useDeleteModalStore();
 
     const [owner, setOwner] = useState<GeneralUser | null>(null);
+    const [likePosting, setLikePosting] = useState<boolean>(false);
     const [liked, setLiked] = useState<boolean | null>(null);
     const [likeCount, setLikeCount] = useState<number | null>(null);
 
     const navigate = useNavigate();
 
-    const likeHandler = () => {
-        if (!liked) {
-            api.post("cube/like", { cubeId: cube.id })
-                .then(() => {
-                    setLiked(true);
-                    likeCount !== null && setLikeCount(1 + likeCount);
-                })
-                .catch(() => {});
-        } else {
-            api.post("cube/removeLike", { cubeId: cube.id })
-                .then(() => {
-                    setLiked(false);
-                    likeCount !== null && setLikeCount(likeCount - 1);
-                })
-                .catch(() => {});
+    const likeHandler = async () => {
+        try {
+            setLikePosting(true);
+            const liked = (await api.post("cube/like", { cubeId: cube.id })).data;
+            setLiked(liked);
+            setLikeCount((prevState) =>
+                prevState !== null ? (liked === true ? prevState + 1 : prevState - 1) : prevState
+            );
+        } catch (e) {
+            const error = e as Error | AxiosError;
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message, {
+                    position: "top-center",
+                    autoClose: 1000,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    transition: Flip,
+                });
+            }
+        } finally {
+            setLikePosting(false);
         }
     };
+
     const { isAuth } = useAuthStore();
 
     const fetchSidesWithPromises = () => {
@@ -195,26 +209,34 @@ const CubeEnvironment = ({
                         </Skeleton>
                         {isAuth && (
                             <Skeleton isLoaded={liked !== null} className="rounded-lg">
-                                <button
-                                    style={{
-                                        padding: "10px",
-                                    }}
-                                    onClick={likeHandler}
-                                >
-                                    {liked ? <LikeFilled /> : <LikeOutlined />}
-                                </button>
-                                {cube.ownerId === user?.id && (
-                                    <Button
-                                        color="danger"
-                                        variant="bordered"
-                                        className="mx-3"
-                                        onClick={() => {
-                                            setIsOpen(true);
-                                        }}
-                                    >
-                                        <DeleteFilled />
-                                    </Button>
-                                )}
+                                <div className="flex">
+                                    <div className="relative">
+                                        <button
+                                            className={`absolute z-10 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] ${
+                                                likePosting && "opacity-0"
+                                            }`}
+                                            onClick={likeHandler}
+                                        >
+                                            {liked ? <LikeFilled /> : <LikeOutlined />}
+                                        </button>
+                                        <PuffLoader
+                                            color="white"
+                                            className={`${likePosting ? "opacity-100" : "opacity-0"}`}
+                                        />
+                                    </div>
+                                    {cube.ownerId === user?.id && (
+                                        <Button
+                                            color="danger"
+                                            variant="bordered"
+                                            className="mx-3"
+                                            onClick={() => {
+                                                setIsOpen(true);
+                                            }}
+                                        >
+                                            <DeleteFilled />
+                                        </Button>
+                                    )}
+                                </div>
                             </Skeleton>
                         )}
                     </div>
